@@ -23,9 +23,7 @@ interface NoteDao {
     suspend fun delete(id: Int)
 
     //######### RETRIEVE OPERATIONS #########//
-    @Query("""
-        select * from tbl_note
-    """)
+    @Query("""select * from tbl_note""")
     fun getAllNotes(): LiveData<List<TblNote>>
 
     @Query("""

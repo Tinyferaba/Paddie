@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
+import com.fera.paddie.view.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,9 +27,10 @@ class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
     private lateinit var ivClearSearchField: ImageView
     private lateinit var ivAddNote: ImageView //Buttons
     private lateinit var edtSearchField: EditText
+    private lateinit var ivShowSideDrawer: ImageView
 
     //######### NOTEs & TODOs List PROPERTY #########//
-    private lateinit var rvNoteTodoList: RecyclerView
+    private lateinit var rvNoteList: RecyclerView
     private lateinit var adapterNoteList: AdapterNoteList
 
     //######### CONTROLLERS PROPERTY #########//
@@ -50,6 +52,10 @@ class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
         ivAddNote.setOnClickListener {
             findNavController().navigate(R.id.addNoteFragment)
         }
+        ivShowSideDrawer.setOnClickListener {
+            val parentActivity = activity as MainActivity
+            parentActivity.showHideSideDrawer()
+        }
 
         ivClearSearchField.setOnClickListener { clearSearchField() }
         ivSearch.setOnClickListener { searchNotes() }
@@ -62,16 +68,30 @@ class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
         ivClearSearchField = v.findViewById(R.id.ivClearSearchField)
         ivAddNote = v.findViewById(R.id.ivAddNote)
         edtSearchField = v.findViewById(R.id.edtSearchField)
+        ivShowSideDrawer = v.findViewById(R.id.ivShowSideDrawer)
 
         //######### CONTROLLERS #########//
         noteControllers = NoteControllers(requireActivity().application)
 
         //######### RECYCLER VIEWS #########//
-        rvNoteTodoList = v.findViewById(R.id.rvNoteList)
-        rvNoteTodoList.layoutManager = LinearLayoutManager(requireContext())
+        rvNoteList = v.findViewById(R.id.rvNoteList)
+        rvNoteList.layoutManager = LinearLayoutManager(requireContext())
         noteControllers.allNotes.observe(viewLifecycleOwner) {noteList ->
             adapterNoteList = AdapterNoteList(requireContext(), noteList, this)
-            rvNoteTodoList.adapter = adapterNoteList
+            rvNoteList.adapter = adapterNoteList
+        }
+    }
+
+    override fun navigateToAddNoteFragment(id: Int) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val tblNote = getNote(id)
+            val bundle = Bundle().apply {
+                putParcelable("tblNote", tblNote)
+            }
+
+            withContext(Dispatchers.Main){
+                findNavController().navigate(R.id.addNoteFragment, bundle)
+            }
         }
     }
 

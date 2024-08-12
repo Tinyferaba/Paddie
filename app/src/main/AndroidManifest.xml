@@ -10,8 +10,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Paddie"
+        android:theme="@style/Theme.Paddie.BlackStatusBar"
         tools:targetApi="31">
+        <activity
+            android:name=".view.uploadToCloud.UploadToCloudActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.aboutUs.AboutUsActivity"
+            android:exported="false" />
         <activity
             android:name=".view.MainActivity"
             android:exported="true">

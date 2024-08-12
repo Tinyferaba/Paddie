@@ -1,10 +1,11 @@
-package com.fera.paddie.view.main
+package com.fera.paddie.view.uploadToCloud
 
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -18,13 +19,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class AdapterNoteList(private val context: Context, private var noteList: List<TblNote>, private val fragment: MainFragment): RecyclerView.Adapter<AdapterNoteList.MyViewHolder>() {
+class AdapterUploadNoteList(private val context: Context, private var noteList: List<TblNote>, private val fragment: UploadToCloudFragment): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
         fun deleteNote(id: Int)
         fun updateFavourite(id: Int, isFavourite: Boolean)
         suspend fun getNote(id: Int): TblNote
-        fun navigateToAddNoteFragment(id: Int)
     }
 
     class MyViewHolder(i: View): RecyclerView.ViewHolder(i) {
@@ -33,6 +33,7 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
         val tvDesc: TextView = i.findViewById(R.id.tvNoteDescListItem)
         val ivDelete: ImageView = i.findViewById(R.id.ivDeleteNoteListItem)
         val ivFavourite: ImageView = i.findViewById(R.id.ivFavouriteNoteListItem)
+        val chkbxSelectBox: CheckBox = i.findViewById(R.id.chkbxSelectBox)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -51,13 +52,9 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.apply {
+
             tvTitle.text = noteList[position].title
-            var desc = noteList[position].description
-            desc?.let {
-                if (it.length > 30)
-                    desc = it.substring(0, 28)
-            }
-            tvDesc.text = desc
+            tvDesc.text = noteList[position].description
             tvDate.text = DateFormatter.formatDate(noteList[position].dateModified)
 
             ivDelete.setOnClickListener {
@@ -90,8 +87,24 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
                 true
             }
 
+            chkbxSelectBox.visibility = View.VISIBLE
+            chkbxSelectBox.isChecked = true
+            chkbxSelectBox.setOnClickListener{
+                if (chkbxSelectBox.isChecked)
+                    chkbxSelectBox.isChecked = false
+                else
+                    chkbxSelectBox.isChecked = true
+            }
+
             itemView.setOnClickListener {
-                fragment.navigateToAddNoteFragment(noteList[position].pkNoteTodoId)
+                CoroutineScope(Dispatchers.IO).launch {
+                    val tblNote = fragment.getNote(noteList[position].pkNoteTodoId)
+                    val bundle = Bundle().apply {
+                        putParcelable("tblNote", tblNote)
+                    }
+
+                    fragment.findNavController().navigate(R.id.addNoteFragment, bundle)
+                }
             }
         }
     }

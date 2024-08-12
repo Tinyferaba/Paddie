@@ -11,7 +11,7 @@
         android:label="fragment_add_note"
         tools:layout="@layout/fragment_add_note" >
         <action
-            android:id="@+id/action_addNoteFragment_to_mainFragment"
+            android:id="@+id/navigateFromAddNoteToMain"
             app:destination="@id/mainFragment" />
     </fragment>
     <fragment
@@ -20,7 +20,7 @@
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
-            android:id="@+id/action_mainFragment_to_addNoteFragment"
+            android:id="@+id/navigateFromMainToAddNote"
             app:destination="@id/addNoteFragment" />
     </fragment>
 </navigation>

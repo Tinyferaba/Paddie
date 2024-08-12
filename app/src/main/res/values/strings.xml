@@ -11,6 +11,8 @@
     <string name="hash">#</string>
 
     <!--  CONTENT DESCRIPTION  -->
+    <string name="navigation_drawer_open">Open Navigation Drawer</string>
+    <string name="navigation_drawer_close">Close Navigation Drawer</string>
     <string name="cdGroupColor">Group Color</string>
     <string name="cdEmptyGroupNotice">No Groups Available. \nAdd One</string>
     <string name="cdAddNewNoteAndTodo">Add New Note And Todo</string>
@@ -49,4 +51,6 @@
     <string name="note">Note</string>
     <string name="Username">username</string>
     <string name="Email">email</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

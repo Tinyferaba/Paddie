@@ -6,4 +6,10 @@
     </style>
 
     <style name="Theme.Paddie" parent="Base.Theme.Paddie" />
+
+    <style name="Theme.Paddie.BlackStatusBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@color/black</item>
+    </style>
 </resources>

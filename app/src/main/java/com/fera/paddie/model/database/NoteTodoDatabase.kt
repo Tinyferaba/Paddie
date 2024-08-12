@@ -13,7 +13,7 @@ import com.fera.paddie.model.typeConverters.DateConverter
 @Database(
     entities = [TblNote::class],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(value = [DateConverter::class])
 abstract class NoteTodoDatabase: RoomDatabase() {
