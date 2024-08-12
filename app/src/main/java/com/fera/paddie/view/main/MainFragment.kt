@@ -104,4 +104,10 @@ class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
             noteControllers.deleteNote(id)
         }
     }
+
+    override fun updateFavourite(id: Int, isFavourite: Boolean) {
+        CoroutineScope(Dispatchers.IO).launch {
+            noteControllers.updateFavourite(id, isFavourite)
+        }
+    }
 }

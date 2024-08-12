@@ -11,19 +11,24 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import com.fera.paddie.R
 import com.fera.paddie.controller.NoteControllers
+import com.fera.paddie.model.TblNote
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class AddNoteFragment : Fragment() {
     //######### STATE & VALUES #########//
     private var changesMade = false
+    private var favourite = false
+    private var tblNote: TblNote?= null
 
     private lateinit var v: View
     private lateinit var ivBack: ImageView      //Image View
     private lateinit var ivSave: ImageView
     private lateinit var edtTitle: EditText     //Edit Text
     private lateinit var edtDesc: EditText
+    private lateinit var ivFavourite: ImageView
 
     private lateinit var noteControllers: NoteControllers
     override fun onCreateView(
@@ -42,12 +47,48 @@ class AddNoteFragment : Fragment() {
     private fun addActionListeners() {
         ivBack.setOnClickListener { goBack() }
         ivSave.setOnClickListener {
-            saveNote()
+            if (tblNote == null){
+                saveNote()
+            } else {
+                updateNote()
+            }
+            changesMade = false
+            ivSave.visibility = View.GONE
+        }
+
+        ivFavourite.setOnClickListener {
+            favourite = !favourite
+
+            if(favourite){
+                ivFavourite.setImageResource(R.drawable.ic_favourite)
+            } else {
+                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+            }
+
+            tblNote?.isFavourite = favourite
+            tblNote?.let {
+                updateFavourite(it.pkNoteTodoId, favourite)
+            }
         }
 
         //######### LISTEN TO CHANGES MADE #########//
         edtTitle.addTextChangedListener { changesMade() }
         edtDesc.addTextChangedListener { changesMade() }
+    }
+
+    private fun updateNote() {
+        CoroutineScope(Dispatchers.IO).launch {
+            tblNote?.title = edtTitle.text.toString()
+            tblNote?.description = edtDesc.text.toString()
+            tblNote?.isFavourite = favourite
+            tblNote?.dateModified = Date()
+
+            tblNote?.let {
+                noteControllers.updateNote(it)
+            }
+        }
+
+        Toast.makeText(requireContext(), "Updating Note", Toast.LENGTH_SHORT).show()
     }
 
     private fun initViews() {
@@ -58,19 +99,21 @@ class AddNoteFragment : Fragment() {
         ivSave = v.findViewById(R.id.ivSaveNoteTodo)
         edtTitle = v.findViewById(R.id.edtTitleNoteTodo)
         edtDesc = v.findViewById(R.id.edtDescNoteTodo)
+        ivFavourite = v.findViewById(R.id.ivFavourite_addNote)
 
-    }
-
-    private fun clearFields() {
-        //todo: Complete this and add it in onDestroy method or in restoreProperties methods
-        //######### NOTES #########//
-        edtTitle.setText("")
-        edtDesc.setText("")
     }
 
     private fun saveNote() {
         CoroutineScope(Dispatchers.IO).launch {
-            //TODO
+            tblNote?.title = edtTitle.text.toString()
+            tblNote?.description = edtDesc.text.toString()
+            tblNote?.isFavourite = favourite
+            tblNote?.dateCreated = Date()
+            tblNote?.dateModified = Date()
+
+            tblNote?.let {
+                noteControllers.insertNote(it)
+            }
         }
         Toast.makeText(requireContext(), "Saving Note", Toast.LENGTH_SHORT).show() //Change it to Note saved if returned value is != -1
     }
@@ -82,5 +125,11 @@ class AddNoteFragment : Fragment() {
 
     private fun goBack() {
         parentFragmentManager.popBackStack()
+    }
+
+    private fun updateFavourite(id: Int, favourite: Boolean){
+        CoroutineScope(Dispatchers.IO).launch {
+            noteControllers.updateFavourite(id, favourite)
+        }
     }
 }

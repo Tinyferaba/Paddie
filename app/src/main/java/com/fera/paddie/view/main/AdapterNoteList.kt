@@ -17,6 +17,7 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
         fun deleteNote(id: Int)
+        fun updateFavourite(id: Int, isFavourite: Boolean)
     }
 
     class MyViewHolder(i: View): RecyclerView.ViewHolder(i) {
@@ -67,7 +68,7 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
                 }
 
                 noteList[position].isFavourite = fav
-                fragment.updateNote(noteList[position])
+                fragment.updateFavourite(noteList[position].pkNoteTodoId, fav)
             }
 
             itemView.setOnLongClickListener {
