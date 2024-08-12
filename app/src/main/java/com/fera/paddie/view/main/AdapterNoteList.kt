@@ -1,16 +1,21 @@
 package com.fera.paddie.view.main
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.util.DateFormatter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class AdapterNoteList(private val context: Context, private var noteList: List<TblNote>, private val fragment: MainFragment): RecyclerView.Adapter<AdapterNoteList.MyViewHolder>() {
@@ -18,6 +23,7 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
         fun updateNote(tblNote: TblNote)
         fun deleteNote(id: Int)
         fun updateFavourite(id: Int, isFavourite: Boolean)
+        suspend fun getNote(id: Int): TblNote
     }
 
     class MyViewHolder(i: View): RecyclerView.ViewHolder(i) {
@@ -79,7 +85,14 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
             }
 
             itemView.setOnClickListener {
+                CoroutineScope(Dispatchers.IO).launch {
+                    val tblNote = fragment.getNote(noteList[position].pkNoteTodoId)
+                    val bundle = Bundle().apply {
+                        putParcelable("tblNote", tblNote)
+                    }
 
+                    fragment.findNavController().navigate(R.id.addNoteFragment, bundle)
+                }
             }
         }
     }

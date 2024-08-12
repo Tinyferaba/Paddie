@@ -47,4 +47,6 @@
     <string name="ttBoldText">Toggle Bold Text</string>
     <string name="todo">Todo</string>
     <string name="note">Note</string>
+    <string name="Username">username</string>
+    <string name="Email">email</string>
 </resources>

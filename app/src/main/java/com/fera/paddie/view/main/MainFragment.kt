@@ -17,6 +17,7 @@ import com.fera.paddie.model.TblNote
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
 
@@ -108,6 +109,12 @@ class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
     override fun updateFavourite(id: Int, isFavourite: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             noteControllers.updateFavourite(id, isFavourite)
+        }
+    }
+
+    override suspend fun getNote(id: Int): TblNote {
+        return withContext(Dispatchers.IO){
+            noteControllers.getNote(id)
         }
     }
 }

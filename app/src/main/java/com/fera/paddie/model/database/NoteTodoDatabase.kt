@@ -6,6 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.fera.paddie.model.TblNote
+import com.fera.paddie.model.dao.NoteDao
 import com.fera.paddie.model.typeConverters.DateConverter
 
 

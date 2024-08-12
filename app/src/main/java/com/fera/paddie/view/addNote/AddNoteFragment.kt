@@ -40,8 +40,30 @@ class AddNoteFragment : Fragment() {
 
         initViews()
         addActionListeners()
+        loadNote()
 
         return v
+    }
+
+    private fun loadNote() {
+        tblNote = arguments?.getParcelable("tblNote")
+        if (tblNote != null)
+            setData()
+    }
+
+    private fun setData() {
+        tblNote?.let {
+            edtTitle.setText(it.title)
+            edtDesc.setText(it.description)
+
+            if (it.isFavourite){
+                favourite = true
+                ivFavourite.setImageResource(R.drawable.ic_favourite)
+            } else {
+                favourite = false
+                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+            }
+        }
     }
 
     private fun addActionListeners() {

@@ -11,9 +11,14 @@ import com.fera.paddie.model.database.NoteTodoDatabase
 
 class NoteControllers (application: Application): AndroidViewModel(application) {
     private val noteDao = NoteTodoDatabase.getDatabase(application).noteDao()
-
+    //TODO: Write dto
 
     val allNotes: LiveData<List<TblNote>> = noteDao.getAllNotes()
+
+    //######### QUERY #########//
+    fun getNote(id: Int): TblNote {
+        return noteDao.getNote(id)
+    }
 
     //######### NOTE METHODS #########//
     suspend fun insertNote(tblNote: TblNote): Int {

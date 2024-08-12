@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/uploadToCloud"
+        android:title="Upload To Cloud"
+        android:icon="@drawable/ic_backup"/>
+    <item
+        android:id="@+id/aboutUs"
+        android:title="About Us"
+        android:icon="@drawable/ic_group"/>
+    <item
+        android:title="VERSION: 1.0"
+        android:checkable="false"/>
+</menu>

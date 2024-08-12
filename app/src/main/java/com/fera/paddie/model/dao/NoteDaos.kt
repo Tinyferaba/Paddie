@@ -1,4 +1,4 @@
-package com.fera.paddie.model.database
+package com.fera.paddie.model.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
@@ -34,5 +34,8 @@ interface NoteDao {
                 or N.description like '%' || :searchText || '%'
     """)
     fun searchNotes(searchText: String): LiveData<List<TblNote>>
+
+    @Query("select * from tbl_note where pkNoteId = :id")
+    fun getNote(id: Int): TblNote
 }
 
