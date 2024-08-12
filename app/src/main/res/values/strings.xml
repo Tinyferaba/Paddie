@@ -1,3 +1,50 @@
 <resources>
     <string name="app_name">Paddie</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <!--  ITEM VALUES & NAMES  -->
+    <string name="menu_item_title">Notes</string>
+    <string name="menu_item_todo_title">Todo</string>
+
+
+    <!--  COMMON Strings  -->
+    <string name="colon">:</string>
+    <string name="hash">#</string>
+
+    <!--  CONTENT DESCRIPTION  -->
+    <string name="cdGroupColor">Group Color</string>
+    <string name="cdEmptyGroupNotice">No Groups Available. \nAdd One</string>
+    <string name="cdAddNewNoteAndTodo">Add New Note And Todo</string>
+    <string name="menu_item_share">Share The Note</string>
+    <string name="menu_item_Favourite">Select as Favourite/Unfavourite</string>
+    <string name="dateCreated">Created:</string>
+    <string name="dateModified">Modified:</string>
+    <string name="startDate">"Start: "</string>
+    <string name="endDate">"End: "</string>
+    <string name="txtUnDoneTodo">Not Done Yet</string>
+    <string name="txtDoneTodo">Already Done</string>
+    <string name="menu_item_delete">Delete this note</string>
+    <string name="delete">Delete</string>
+    <string name="favourite">Favourite</string>
+    <string name="share">Share</string>
+    <string name="reminder">Reminder</string>
+    <string name="addRingTone">Add Ring Tone</string>
+    <string name="description">Description</string>
+
+    <!--  TOOL TIPS  -->
+    <string name="ttPickColor">Click to select a color</string>
+
+    <!--  HINTS  -->
+    <string name="hintType">Type</string>
+    <string name="hintSearch">Search</string>
+    <string name="hintGroupTotal">Group Total</string>
+    <string name="hintGroupName">Group Name</string>
+    <string name="hintTitle">Title</string>
+    <string name="hintDate">1/1/2000</string>
+    <string name="hintDesc">Text...</string>
+    <string name="Aa">Aa</string>
+    <string name="f">F</string>
+    <string name="ttItalicizeText">Toggle Italicized Text</string>
+    <string name="ttBoldText">Toggle Bold Text</string>
+    <string name="todo">Todo</string>
+    <string name="note">Note</string>
 </resources>

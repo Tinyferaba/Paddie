@@ -1,0 +1,38 @@
+package com.fera.paddie.model.database
+
+import androidx.lifecycle.LiveData
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Update
+import com.fera.paddie.model.TblNote
+
+@Dao
+interface NoteDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(tblNote: TblNote): Long
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(tblNote: TblNote)
+
+    @Query("update tbl_note set isFavourite = :isFavourite where pkNoteId = :id")
+    suspend fun updateFavourite(id: Int, isFavourite: Boolean)
+
+    @Query("delete from tbl_note where pkNoteId = :id")
+    suspend fun delete(id: Int)
+
+    //######### RETRIEVE OPERATIONS #########//
+    @Query("""
+        select * from tbl_note
+    """)
+    fun getAllNotes(): LiveData<List<TblNote>>
+
+    @Query("""
+        select * from tbl_note as N 
+            where N.title like '%' || :searchText || '%'
+                or N.description like '%' || :searchText || '%'
+    """)
+    fun searchNotes(searchText: String): LiveData<List<TblNote>>
+}
+
