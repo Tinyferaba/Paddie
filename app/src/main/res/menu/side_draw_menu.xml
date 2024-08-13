@@ -10,5 +10,6 @@
         android:icon="@drawable/ic_group"/>
     <item
         android:title="VERSION: 1.0"
+        android:enabled="false"
         android:checkable="false"/>
 </menu>

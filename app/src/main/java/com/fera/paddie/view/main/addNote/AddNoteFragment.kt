@@ -1,4 +1,4 @@
-package com.fera.paddie.view.addNote
+package com.fera.paddie.view.main.addNote
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -56,7 +56,7 @@ class AddNoteFragment : Fragment() {
             goBack()
         }
         ivSave.setOnClickListener {
-            if (tblNote.pkNoteTodoId == -1) {
+            if (tblNote.pkNoteTodoId == 0) {
                 saveNote()
             } else {
                 updateNote()
@@ -85,22 +85,8 @@ class AddNoteFragment : Fragment() {
         edtDesc.addTextChangedListener { changesMade() }
     }
 
-    private fun toggleEditability(editMode: Boolean) {
-        if (editMode) {
-            ivSave.visibility = View.VISIBLE
-            ivEdit.visibility = View.GONE
-            edtTitle.isEnabled = true
-            edtDesc.isEnabled = true
-        } else {
-            ivSave.visibility = View.GONE
-            ivEdit.visibility = View.VISIBLE
-            edtTitle.isEnabled = false
-            edtDesc.isEnabled = false
-        }
-    }
-
     private fun initViews() {
-        tblNote = TblNote(-1, false, "", "", Date(), Date())
+        tblNote = TblNote(isFavourite = false, title = "", description = "", dateCreated = Date(), dateModified = Date())
         noteControllers = NoteControllers(requireActivity().application)
 
         //######### VIEWS #########//
@@ -146,6 +132,21 @@ class AddNoteFragment : Fragment() {
         }
 
         toggleEditability(true)
+    }
+
+
+    private fun toggleEditability(editMode: Boolean) {
+        if (editMode) {
+            ivSave.visibility = View.VISIBLE
+            ivEdit.visibility = View.GONE
+            edtTitle.isEnabled = true
+            edtDesc.isEnabled = true
+        } else {
+            ivSave.visibility = View.GONE
+            ivEdit.visibility = View.VISIBLE
+            edtTitle.isEnabled = false
+            edtDesc.isEnabled = false
+        }
     }
 
 

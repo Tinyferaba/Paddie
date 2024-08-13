@@ -1,19 +1,14 @@
-package com.fera.paddie.view
+package com.fera.paddie.view.main
 
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.fragment.app.FragmentContainerView
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import com.fera.paddie.R
 import com.fera.paddie.view.aboutUs.AboutUsActivity
 import com.fera.paddie.view.uploadToCloud.UploadToCloudActivity
@@ -44,11 +39,13 @@ class MainActivity : AppCompatActivity() {
         sideDrawer.setNavigationItemSelectedListener {menuItem ->
             when(menuItem.itemId){
                 R.id.menuAboutUs -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, AboutUsActivity::class.java)
                     startActivity(intent)
                     true
                 }
                 R.id.menuUploadToCloud -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, UploadToCloudActivity::class.java)
                     startActivity(intent)
                     true
@@ -73,5 +70,12 @@ class MainActivity : AppCompatActivity() {
     
     private fun setStatusBarColor(){
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+    }
+
+    override fun onBackPressed() {
+        if(drawerLayout.isDrawerOpen(GravityCompat.START))
+            showHideSideDrawer()
+        else
+            super.onBackPressed()
     }
 }

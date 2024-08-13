@@ -1,24 +1,18 @@
-package com.fera.paddie.view.main
+package com.fera.paddie.view.main.home
 
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.util.DateFormatter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
-class AdapterNoteList(private val context: Context, private var noteList: List<TblNote>, private val fragment: MainFragment): RecyclerView.Adapter<AdapterNoteList.MyViewHolder>() {
+class AdapterNoteList(private val context: Context, private var noteList: List<TblNote>, private val fragment: HomeFragment): RecyclerView.Adapter<AdapterNoteList.MyViewHolder>() {
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
         fun deleteNote(id: Int)
@@ -83,12 +77,13 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
                 fragment.updateFavourite(noteList[position].pkNoteTodoId, fav)
             }
 
-            itemView.setOnLongClickListener {
-                ContextCompat.getColor(itemView.context, R.color.light_green)
-                itemView.scaleX = 1.1f
-                itemView.scaleY = 1.1f
-                true
-            }
+            //todo: Complete this functionality
+//            itemView.setOnLongClickListener {
+//                val color = ContextCompat.getColor(itemView.context, R.color.light_green)
+//                itemView.scaleX = 1.05f
+//                itemView.scaleY = 1.02f
+//                true
+//            }
 
             itemView.setOnClickListener {
                 fragment.navigateToAddNoteFragment(noteList[position].pkNoteTodoId)

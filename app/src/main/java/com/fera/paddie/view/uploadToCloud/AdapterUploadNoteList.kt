@@ -8,7 +8,9 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
@@ -19,13 +21,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class AdapterUploadNoteList(private val context: Context, private var noteList: List<TblNote>, private val fragment: UploadToCloudFragment): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
+class AdapterUploadNoteList(private val context: Context, private var noteList: List<TblNote>, private val parentActivity: UploadToCloudActivity): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
         fun deleteNote(id: Int)
         fun updateFavourite(id: Int, isFavourite: Boolean)
         suspend fun getNote(id: Int): TblNote
     }
+
+    private var allChecked = false
 
     class MyViewHolder(i: View): RecyclerView.ViewHolder(i) {
         val tvTitle: TextView = i.findViewById(R.id.tvNoteTitleListItem)
@@ -54,11 +58,16 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
         holder.apply {
 
             tvTitle.text = noteList[position].title
-            tvDesc.text = noteList[position].description
-            tvDate.text = DateFormatter.formatDate(noteList[position].dateModified)
+            var desc = noteList[position].description
+            desc?.let {
+                if (it.length > 30)
+                    desc = it.substring(0, 28)
+            }
+            tvDesc.text = desc
+            tvDate.visibility = View.GONE
 
             ivDelete.setOnClickListener {
-                fragment.deleteNote(noteList[position].pkNoteTodoId)
+                parentActivity.deleteNote(noteList[position].pkNoteTodoId)
             }
 
             if(noteList[position].isFavourite){
@@ -77,36 +86,46 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
                 }
 
                 noteList[position].isFavourite = fav
-                fragment.updateFavourite(noteList[position].pkNoteTodoId, fav)
+                parentActivity.updateFavourite(noteList[position].pkNoteTodoId, fav)
             }
 
-            itemView.setOnLongClickListener {
-                ContextCompat.getColor(itemView.context, R.color.light_green)
-                itemView.scaleX = 1.1f
-                itemView.scaleY = 1.1f
-                true
+            if (allChecked){
+                chkbxSelectBox.isChecked = true
+            } else {
+                chkbxSelectBox.isChecked = false
             }
 
             chkbxSelectBox.visibility = View.VISIBLE
-            chkbxSelectBox.isChecked = true
-            chkbxSelectBox.setOnClickListener{
-                if (chkbxSelectBox.isChecked)
-                    chkbxSelectBox.isChecked = false
-                else
+
+            chkbxSelectBox.setOnClickListener {
+                if (chkbxSelectBox.isChecked) {
                     chkbxSelectBox.isChecked = true
+                    parentActivity.addToUploadList(noteList[position])
+                } else {
+                    chkbxSelectBox.isChecked = false
+                    parentActivity.removeFromUploadList(noteList[position])
+                }
             }
 
             itemView.setOnClickListener {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val tblNote = fragment.getNote(noteList[position].pkNoteTodoId)
-                    val bundle = Bundle().apply {
-                        putParcelable("tblNote", tblNote)
-                    }
-
-                    fragment.findNavController().navigate(R.id.addNoteFragment, bundle)
-                }
+                // TODO: Open notes to be edited
+//                CoroutineScope(Dispatchers.IO).launch {
+//                    val tblNote = parentActivity.getNote(noteList[position].pkNoteTodoId)
+//                    val bundle = Bundle().apply {
+//                        putParcelable("tblNote", tblNote)
+//                    }
+//
+//                }
+                Toast.makeText(parentActivity, "Can't Edit notes here...", Toast.LENGTH_SHORT).show()
             }
         }
+
+    }
+
+    fun checkAll(check: Boolean){
+        allChecked = check
+        parentActivity.addToUploadList(noteList)
+        notifyDataSetChanged()
     }
 }
 

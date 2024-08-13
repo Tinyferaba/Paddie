@@ -1,4 +1,4 @@
-package com.fera.paddie.view.main
+package com.fera.paddie.view.main.home
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,13 +14,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
-import com.fera.paddie.view.MainActivity
+import com.fera.paddie.view.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
+class HomeFragment : Fragment(), AdapterNoteList.NoteActivities {
 
     private lateinit var v: View
     private lateinit var ivSearch: ImageView
@@ -40,7 +40,7 @@ class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_main, container, false)
+        v = inflater.inflate(R.layout.fragment_home, container, false)
 
         initViews()
         addActionListeners()
@@ -74,7 +74,7 @@ class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
         noteControllers = NoteControllers(requireActivity().application)
 
         //######### RECYCLER VIEWS #########//
-        rvNoteList = v.findViewById(R.id.rvNoteList)
+        rvNoteList = v.findViewById(R.id.rvNoteList_home)
         rvNoteList.layoutManager = LinearLayoutManager(requireContext())
         noteControllers.allNotes.observe(viewLifecycleOwner) {noteList ->
             adapterNoteList = AdapterNoteList(requireContext(), noteList, this)
@@ -101,12 +101,12 @@ class MainFragment : Fragment(), AdapterNoteList.NoteActivities {
                 adapterNoteList.updateNoteList(noteList)
             }
         } else {
-            CoroutineScope(Dispatchers.IO).launch {
+//            CoroutineScope(Dispatchers.IO).launch {
                 val searchText = edtSearchField.text.toString()
                 noteControllers.searchNotes(searchText).observe(viewLifecycleOwner) {noteList ->
                     adapterNoteList.updateNoteList(noteList)
                 }
-            }
+//            }
         }
     }
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_main"
-    tools:context=".view.MainActivity">
+    tools:context=".view.main.MainActivity">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
@@ -22,6 +22,8 @@
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/mainSideDrawer"
         android:layout_width="wrap_content"
+        android:theme="@style/ThemeOverlay.Material3.Dark"
+        android:background="@color/black"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         app:headerLayout="@layout/side_draw_top_view"
