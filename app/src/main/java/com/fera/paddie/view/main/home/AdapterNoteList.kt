@@ -10,15 +10,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.util.DateFormatter
+import java.util.Date
 
 
 class AdapterNoteList(private val context: Context, private var noteList: List<TblNote>, private val fragment: HomeFragment): RecyclerView.Adapter<AdapterNoteList.MyViewHolder>() {
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
-        fun deleteNote(id: Int)
-        fun updateFavourite(id: Int, isFavourite: Boolean)
-        suspend fun getNote(id: Int): TblNote
-        fun navigateToAddNoteFragment(id: Int)
+        fun deleteNote(id: String)
+        fun updateFavourite(id: String, isFavourite: Boolean)
+        suspend fun getNote(id: String): TblNote
+        fun navigateToAddNoteFragment(id: String)
     }
 
     class MyViewHolder(i: View): RecyclerView.ViewHolder(i) {
@@ -26,7 +27,7 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
         val tvDate: TextView = i.findViewById(R.id.tvNoteDateListItem)
         val tvDesc: TextView = i.findViewById(R.id.tvNoteDescListItem)
         val ivDelete: ImageView = i.findViewById(R.id.ivDeleteNoteListItem)
-        val ivFavourite: ImageView = i.findViewById(R.id.ivFavouriteNoteListItem)
+//        val ivFavourite: ImageView = i.findViewById(R.id.ivFavouriteNoteListItem)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -52,30 +53,30 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
                     desc = it.substring(0, 28)
             }
             tvDesc.text = desc
-            tvDate.text = DateFormatter.formatDate(noteList[position].dateModified)
+            tvDate.text = DateFormatter.formatDate(Date(noteList[position].dateModified))
 
             ivDelete.setOnClickListener {
-                fragment.deleteNote(noteList[position].pkNoteTodoId)
+                fragment.deleteNote(noteList[position].pkNoteTodoId!!)
             }
 
-            if(noteList[position].isFavourite){
-                ivFavourite.setImageResource(R.drawable.ic_favourite)
-            } else {
-                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
-            }
-
-            ivFavourite.setOnClickListener {
-                val fav = !noteList[position].isFavourite
-
-                if(fav){
-                    ivFavourite.setImageResource(R.drawable.ic_favourite)
-                } else {
-                    ivFavourite.setImageResource(R.drawable.ic_unfavourite)
-                }
-
-                noteList[position].isFavourite = fav
-                fragment.updateFavourite(noteList[position].pkNoteTodoId, fav)
-            }
+//            if(noteList[position].isFavourite){
+//                ivFavourite.setImageResource(R.drawable.ic_favourite)
+//            } else {
+//                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+//            }
+//
+//            ivFavourite.setOnClickListener {
+//                val fav = !noteList[position].isFavourite
+//
+//                if(fav){
+//                    ivFavourite.setImageResource(R.drawable.ic_favourite)
+//                } else {
+//                    ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+//                }
+//
+//                noteList[position].isFavourite = fav
+//                fragment.updateFavourite(noteList[position].pkNoteTodoId!!, fav)
+//            }
 
             //todo: Complete this functionality
 //            itemView.setOnLongClickListener {
@@ -86,7 +87,7 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
 //            }
 
             itemView.setOnClickListener {
-                fragment.navigateToAddNoteFragment(noteList[position].pkNoteTodoId)
+                fragment.navigateToAddNoteFragment(noteList[position].pkNoteTodoId!!)
             }
         }
     }

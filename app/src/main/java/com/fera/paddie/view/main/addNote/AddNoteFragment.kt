@@ -10,8 +10,10 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import com.fera.paddie.R
-import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
+import com.fera.paddie.model.util.CONST
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,9 +31,11 @@ class AddNoteFragment : Fragment() {
     private lateinit var ivEdit: ImageView
     private lateinit var edtTitle: EditText     //Edit Text
     private lateinit var edtDesc: EditText
-    private lateinit var ivFavourite: ImageView
+//    private lateinit var ivFavourite: ImageView
 
-    private lateinit var noteControllers: NoteControllers
+    //    private lateinit var noteControllers: NoteControllers
+    private lateinit var mDBRef: DatabaseReference
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,7 +60,7 @@ class AddNoteFragment : Fragment() {
             goBack()
         }
         ivSave.setOnClickListener {
-            if (tblNote.pkNoteTodoId == 0) {
+            if (tblNote.pkNoteTodoId == null) {
                 saveNote()
             } else {
                 updateNote()
@@ -67,18 +71,18 @@ class AddNoteFragment : Fragment() {
         ivEdit.setOnClickListener {
             toggleEditability(true)
         }
-        ivFavourite.setOnClickListener {
-            favourite = !favourite
-
-            if (favourite) {
-                ivFavourite.setImageResource(R.drawable.ic_favourite)
-            } else {
-                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
-            }
-
-            tblNote.isFavourite = favourite
-            updateFavourite(tblNote.pkNoteTodoId, favourite)
-        }
+//        ivFavourite.setOnClickListener {
+//            favourite = !favourite
+//
+//            if (favourite) {
+//                ivFavourite.setImageResource(R.drawable.ic_favourite)
+//            } else {
+//                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+//            }
+//
+////            tblNote.isFavourite = favourite
+//            updateFavourite(tblNote.pkNoteTodoId!!, favourite)
+//        }
 
         //######### LISTEN TO CHANGES MADE #########//
         edtTitle.addTextChangedListener { changesMade() }
@@ -86,8 +90,9 @@ class AddNoteFragment : Fragment() {
     }
 
     private fun initViews() {
-        tblNote = TblNote(isFavourite = false, title = "", description = "", dateCreated = Date(), dateModified = Date())
-        noteControllers = NoteControllers(requireActivity().application)
+        mDBRef = FirebaseDatabase.getInstance().getReference()
+        tblNote = TblNote()
+//        noteControllers = NoteControllers(requireActivity().application)
 
         //######### VIEWS #########//
         ivBack = v.findViewById(R.id.ivBackAddNoteTodo)
@@ -95,41 +100,57 @@ class AddNoteFragment : Fragment() {
         ivEdit = v.findViewById(R.id.ivEditNote)
         edtTitle = v.findViewById(R.id.edtTitleNoteTodo)
         edtDesc = v.findViewById(R.id.edtDescNoteTodo)
-        ivFavourite = v.findViewById(R.id.ivFavourite_addNote)
+//        ivFavourite = v.findViewById(R.id.ivFavourite_addNote)
     }
 
 
     private fun updateNote() {
-        CoroutineScope(Dispatchers.IO).launch {
-            tblNote.title = edtTitle.text.toString()
-            tblNote.description = edtDesc.text.toString()
-            tblNote.isFavourite = favourite
-            tblNote.dateModified = Date()
+//        CoroutineScope(Dispatchers.IO).launch {
+        tblNote.title = edtTitle.text.toString()
+        tblNote.description = edtDesc.text.toString()
+//            tblNote.isFavourite = favourite
+        tblNote.dateModified = Date().time
 
-            noteControllers.updateNote(tblNote)
-        }
+        val updates = mapOf<String, Any>(
+            "dateModified" to System.currentTimeMillis(),
+            "description" to edtDesc.text.toString(),
+            "title" to edtTitle.text.toString()
+        )
 
-        Toast.makeText(requireContext(), "Updating Note", Toast.LENGTH_SHORT).show()
+        mDBRef.child(CONST.KEY_TBL_NOTE).child(tblNote.pkNoteTodoId!!)
+            .updateChildren(updates)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    Toast.makeText(requireContext(), "Note Updated", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(requireContext(), "Error Updating", Toast.LENGTH_SHORT).show()
+                }
+            }
+//            noteControllers.updateNote(tblNote)
+
+//        }
     }
 
     private fun loadNote() {
-        val tmpNote: TblNote? = arguments?.getParcelable("tblNote")
+        val tmpNote: TblNote? = arguments?.getParcelable(CONST.KEY_TBL_NOTE)
 
         if (tmpNote != null)
             setData(tmpNote)
     }
 
     private fun setData(tmpNote: TblNote) {
+        tblNote = tmpNote
+
         edtTitle.setText(tmpNote.title)
         edtDesc.setText(tmpNote.description)
 
-        if (tmpNote.isFavourite) {
-            favourite = true
-            ivFavourite.setImageResource(R.drawable.ic_favourite)
-        } else {
-            favourite = false
-            ivFavourite.setImageResource(R.drawable.ic_unfavourite)
-        }
+//        if (tmpNote.isFavourite) {
+//            favourite = true
+//            ivFavourite.setImageResource(R.drawable.ic_favourite)
+//        } else {
+//            favourite = false
+//            ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+//        }
 
         toggleEditability(true)
     }
@@ -151,16 +172,33 @@ class AddNoteFragment : Fragment() {
 
 
     private fun saveNote() {
-        CoroutineScope(Dispatchers.IO).launch {
-            tblNote.title = edtTitle.text.toString()
-            tblNote.description = edtDesc.text.toString()
-            tblNote.isFavourite = favourite
-            tblNote.dateCreated = Date()
-            tblNote.dateModified = Date()
+//        CoroutineScope(Dispatchers.IO).launch {
+        tblNote.title = edtTitle.text.toString()
+        tblNote.description = edtDesc.text.toString()
+//        tblNote.isFavourite = favourite
+        tblNote.dateCreated = Date().time
+        tblNote.dateModified = Date().time
 
-            noteControllers.insertNote(tblNote)
-        }
-        Toast.makeText(requireContext(), "Saving Note", Toast.LENGTH_SHORT).show() //Change it to Note saved if returned value is != -1
+        val noteKey = mDBRef.child(CONST.KEY_TBL_NOTE).push().key
+        tblNote.pkNoteTodoId = noteKey!!
+
+        mDBRef.child(CONST.KEY_TBL_NOTE).child(noteKey).setValue(tblNote)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(requireContext(), "Saving Note", Toast.LENGTH_SHORT)
+                        .show() //Change it to Note saved if returned value is != -1
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error Saving: ${task.exception}",
+                        Toast.LENGTH_SHORT
+                    ).show() //Change it to Note saved if returned value is != -1
+                }
+            }
+
+//            noteControllers.insertNote(tblNote)
+//        }
+
     }
 
     private fun changesMade() {
@@ -172,9 +210,9 @@ class AddNoteFragment : Fragment() {
         parentFragmentManager.popBackStack()
     }
 
-    private fun updateFavourite(id: Int, favourite: Boolean) {
-        CoroutineScope(Dispatchers.IO).launch {
-            noteControllers.updateFavourite(id, favourite)
-        }
+    private fun updateFavourite(id: String, favourite: Boolean) {
+//        CoroutineScope(Dispatchers.IO).launch {
+//            noteControllers.updateFavourite(id, favourite)
+//        }
     }
 }

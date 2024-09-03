@@ -24,9 +24,9 @@ import kotlinx.coroutines.launch
 class AdapterUploadNoteList(private val context: Context, private var noteList: List<TblNote>, private val parentActivity: UploadToCloudActivity): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
-        fun deleteNote(id: Int)
-        fun updateFavourite(id: Int, isFavourite: Boolean)
-        suspend fun getNote(id: Int): TblNote
+        fun deleteNote(id: String)
+        fun updateFavourite(id: String, isFavourite: Boolean)
+        suspend fun getNote(id: String): TblNote
     }
 
     private var allChecked = false
@@ -36,7 +36,7 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
         val tvDate: TextView = i.findViewById(R.id.tvNoteDateListItem)
         val tvDesc: TextView = i.findViewById(R.id.tvNoteDescListItem)
         val ivDelete: ImageView = i.findViewById(R.id.ivDeleteNoteListItem)
-        val ivFavourite: ImageView = i.findViewById(R.id.ivFavouriteNoteListItem)
+//        val ivFavourite: ImageView = i.findViewById(R.id.ivFavouriteNoteListItem)
         val chkbxSelectBox: CheckBox = i.findViewById(R.id.chkbxSelectBox)
     }
 
@@ -67,27 +67,27 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
             tvDate.visibility = View.GONE
 
             ivDelete.setOnClickListener {
-                parentActivity.deleteNote(noteList[position].pkNoteTodoId)
+                parentActivity.deleteNote(noteList[position].pkNoteTodoId!!)
             }
 
-            if(noteList[position].isFavourite){
-                ivFavourite.setImageResource(R.drawable.ic_favourite)
-            } else {
-                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
-            }
+//            if(noteList[position].isFavourite){
+//                ivFavourite.setImageResource(R.drawable.ic_favourite)
+//            } else {
+//                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+//            }
 
-            ivFavourite.setOnClickListener {
-                val fav = !noteList[position].isFavourite
-
-                if(fav){
-                    ivFavourite.setImageResource(R.drawable.ic_favourite)
-                } else {
-                    ivFavourite.setImageResource(R.drawable.ic_unfavourite)
-                }
-
-                noteList[position].isFavourite = fav
-                parentActivity.updateFavourite(noteList[position].pkNoteTodoId, fav)
-            }
+//            ivFavourite.setOnClickListener {
+//                val fav = !noteList[position].isFavourite
+//
+//                if(fav){
+//                    ivFavourite.setImageResource(R.drawable.ic_favourite)
+//                } else {
+//                    ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+//                }
+//
+//                noteList[position].isFavourite = fav
+//                parentActivity.updateFavourite(noteList[position].pkNoteTodoId!!, fav)
+//            }
 
             if (allChecked){
                 chkbxSelectBox.isChecked = true

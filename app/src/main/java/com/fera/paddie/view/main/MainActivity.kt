@@ -1,7 +1,9 @@
 package com.fera.paddie.view.main
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -44,12 +46,12 @@ class MainActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-                R.id.menuUploadToCloud -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    val intent = Intent(this, UploadToCloudActivity::class.java)
-                    startActivity(intent)
-                    true
-                }
+//                R.id.menuUploadToCloud -> {
+//                    drawerLayout.closeDrawer(GravityCompat.START)
+//                    val intent = Intent(this, UploadToCloudActivity::class.java)
+//                    startActivity(intent)
+//                    true
+//                }
                 else -> {true}
             }
         }
@@ -70,6 +72,10 @@ class MainActivity : AppCompatActivity() {
     
     private fun setStatusBarColor(){
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val decorView = window.decorView
+            decorView.systemUiVisibility = decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+        }
     }
 
     override fun onBackPressed() {

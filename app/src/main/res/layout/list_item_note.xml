@@ -19,7 +19,7 @@
         android:textSize="15sp"
         android:textStyle="italic"
         app:layout_constraintBottom_toBottomOf="@+id/textView6"
-        app:layout_constraintEnd_toStartOf="@+id/ivFavouriteNoteListItem"
+        app:layout_constraintEnd_toStartOf="@+id/ivDeleteNoteListItem"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toTopOf="@+id/textView6" />
@@ -74,13 +74,13 @@
         app:layout_constraintStart_toEndOf="@+id/tvNoteDateListItem"
         app:layout_constraintTop_toTopOf="@+id/tvNoteDateListItem" />
 
-    <ImageView
-        android:id="@+id/ivFavouriteNoteListItem"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ivDeleteNoteListItem"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_unfavourite" />
+<!--    <ImageView-->
+<!--        android:id="@+id/ivFavouriteNoteListItem"-->
+<!--        android:layout_width="35dp"-->
+<!--        android:layout_height="35dp"-->
+<!--        android:layout_marginEnd="15dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/ivDeleteNoteListItem"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/ic_unfavourite" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>
