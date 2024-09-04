@@ -26,6 +26,12 @@ interface NoteDao {
     @Query("""select * from tbl_note""")
     fun getAllNotes(): LiveData<List<TblNote>>
 
+    @Query("""select * from tbl_note where `key` is null""")
+    fun getAllNewNotes(): LiveData<List<TblNote>>
+
+    @Query("""select * from tbl_note where `key` is not null""")
+    fun getAllUploadedNotes(): LiveData<List<TblNote>>
+
     @Query("""
         select * from tbl_note as N
             where N.title like '%' || :searchText || '%'

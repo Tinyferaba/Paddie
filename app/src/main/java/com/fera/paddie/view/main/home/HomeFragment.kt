@@ -1,36 +1,18 @@
 package com.fera.paddie.view.main.home
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.widget.addTextChangedListener
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 //import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
-import com.fera.paddie.model.util.CONST
-import com.fera.paddie.view.main.MainActivity
-import com.fera.paddie.view.main.addNote.AddNoteActivity
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
+import com.fera.paddie.view.main.AdapterNoteList
 import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.util.Date
 
 class HomeFragment : Fragment() {
     private val TAG = "HomeFragment"

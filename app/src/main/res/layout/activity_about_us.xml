@@ -12,7 +12,7 @@
     <TextView
         android:id="@+id/textView17"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="65dp"
         android:background="@drawable/bg_cl_top_views"
         android:gravity="center"
         android:text="About Us"

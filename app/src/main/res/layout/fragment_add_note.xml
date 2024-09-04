@@ -33,7 +33,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <EditText
-            android:id="@+id/edtTitleNoteTodo"
+            android:id="@+id/edtTitleNote"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -78,7 +78,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <EditText
-        android:id="@+id/edtDescNoteTodo"
+        android:id="@+id/edtDescNote"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"

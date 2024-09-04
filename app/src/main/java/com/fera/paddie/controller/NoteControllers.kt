@@ -19,6 +19,9 @@ class NoteControllers (application: Application): AndroidViewModel(application) 
     val allNotes: LiveData<List<TblNote>> = noteDao.getAllNotes()
 
     //######### QUERY #########//
+    val getAllNewNotes = noteDao.getAllNewNotes()
+    val getAllUploadedNotes = noteDao.getAllUploadedNotes()
+
     fun getNote(id: Int): TblNote {
         return noteDao.getNote(id)
     }

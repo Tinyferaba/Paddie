@@ -95,8 +95,8 @@ class AddNoteFragment : Fragment() {
         ivBack = v.findViewById(R.id.ivBackAddNoteTodo)
         ivSave = v.findViewById(R.id.ivSaveNoteTodo)
         ivEdit = v.findViewById(R.id.ivEditNote)
-        edtTitle = v.findViewById(R.id.edtTitleNoteTodo)
-        edtDesc = v.findViewById(R.id.edtDescNoteTodo)
+        edtTitle = v.findViewById(R.id.edtTitleNote)
+        edtDesc = v.findViewById(R.id.edtDescNote)
 //        ivFavourite = v.findViewById(R.id.ivFavourite_addNote)
     }
 
@@ -182,14 +182,9 @@ class AddNoteFragment : Fragment() {
         mDBRef.child(CONST.KEY_TBL_NOTE).child(noteKey).setValue(tblNote)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(requireContext(), "Saving Note", Toast.LENGTH_SHORT)
-                        .show() //Change it to Note saved if returned value is != -1
+                    Toast.makeText(requireContext(), "Saving Note", Toast.LENGTH_SHORT).show() //Change it to Note saved if returned value is != -1
                 } else {
-                    Toast.makeText(
-                        requireContext(),
-                        "Error Saving: ${task.exception}",
-                        Toast.LENGTH_SHORT
-                    ).show() //Change it to Note saved if returned value is != -1
+                    Toast.makeText(requireContext(), "Error Saving: ${task.exception}", Toast.LENGTH_SHORT).show() //Change it to Note saved if returned value is != -1
                 }
             }
 

@@ -1,4 +1,4 @@
-package com.fera.paddie.view.main.home
+package com.fera.paddie.view.main
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -11,7 +11,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.util.DateFormatter
-import com.fera.paddie.view.main.MainActivity
 import java.util.Date
 
 

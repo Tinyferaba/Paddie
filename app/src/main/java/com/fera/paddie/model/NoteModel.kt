@@ -10,21 +10,22 @@ import androidx.room.PrimaryKey
 data class TblNote(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "pkNoteId")
-    var pkNoteId: Int? = null,  // Changed to Int? for auto-generation
-    var key: String?,
-    var favourite: Boolean = false,
+    var pkNoteId: Int? = null,
+    var key: String? = null,
     var title: String? = null,
     var description: String? = null,
+    var favourite: Boolean = false,
     var dateCreated: Long = System.currentTimeMillis(),
     var dateModified: Long = System.currentTimeMillis()
 ) : Parcelable {
 
-    constructor(): this(
+    // Empty constructor
+    constructor() : this(
         pkNoteId = null,
         key = null,
-        favourite = false,
         title = null,
         description = null,
+        favourite = false,
         dateCreated = System.currentTimeMillis(),
         dateModified = System.currentTimeMillis()
     )
@@ -32,19 +33,20 @@ data class TblNote(
     // Parcelable constructor
     constructor(parcel: Parcel) : this(
         pkNoteId = parcel.readValue(Int::class.java.classLoader) as? Int,
-        favourite = parcel.readByte() != 0.toByte(),
         key = parcel.readString(),
         title = parcel.readString(),
         description = parcel.readString(),
+        favourite = parcel.readByte() != 0.toByte(),
         dateCreated = parcel.readLong(),
         dateModified = parcel.readLong()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(pkNoteId)
-        parcel.writeByte(if (favourite) 1 else 0)
+        parcel.writeString(key)
         parcel.writeString(title)
         parcel.writeString(description)
+        parcel.writeByte(if (favourite) 1 else 0)
         parcel.writeLong(dateCreated)
         parcel.writeLong(dateModified)
     }

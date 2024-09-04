@@ -1,12 +1,15 @@
 package com.fera.paddie.view.main.addNote
 
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
@@ -14,21 +17,20 @@ import com.fera.paddie.R
 import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.model.util.CONST
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Date
 
 class AddNoteActivity : AppCompatActivity() {
+    private val TAG = "AddNoteActivity"
 
     //######### STATE & VALUES #########//
     private var changesMade = false
     private var favourite = false
     private lateinit var tblNote: TblNote
 
-    private lateinit var v: View
     private lateinit var ivBack: ImageView      //Image View
     private lateinit var ivSave: ImageView
     private lateinit var ivEdit: ImageView
@@ -37,7 +39,6 @@ class AddNoteActivity : AppCompatActivity() {
     private lateinit var ivFavourite: ImageView
 
     private lateinit var noteControllers: NoteControllers
-    private lateinit var mDBRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,10 +53,11 @@ class AddNoteActivity : AppCompatActivity() {
         initViews()
         addActionListeners()
         loadNote()
+
+        setStatusBarColor()
     }
 
     private fun addActionListeners() {
-
         ivBack.setOnClickListener {
             if (changesMade) {
                 saveNote()
@@ -95,30 +97,29 @@ class AddNoteActivity : AppCompatActivity() {
     }
 
     private fun initViews() {
-
-        mDBRef = FirebaseDatabase.getInstance().getReference()
         tblNote = TblNote()
         noteControllers = NoteControllers(application)
 
         //######### VIEWS #########//
-        ivBack = v.findViewById(R.id.ivBackAddNoteTodo)
-        ivSave = v.findViewById(R.id.ivSaveNoteTodo)
-        ivEdit = v.findViewById(R.id.ivEditNote)
-        edtTitle = v.findViewById(R.id.edtTitleNoteTodo)
-        edtDesc = v.findViewById(R.id.edtDescNoteTodo)
-        ivFavourite = v.findViewById(R.id.ivFavourite_addNote)
+        ivBack =findViewById(R.id.ivBackAddNoteTodo)
+        ivSave =findViewById(R.id.ivSaveNoteTodo)
+        ivEdit =findViewById(R.id.ivEditNote)
+        edtTitle =findViewById(R.id.edtTitleNote)
+        edtDesc =findViewById(R.id.edtDescNote)
+        ivFavourite =findViewById(R.id.ivFavourite_addNote)
     }
 
 
     private fun updateNote() {
-        CoroutineScope(Dispatchers.IO).launch {
-            tblNote.title = edtTitle.text.toString()
-            tblNote.description = edtDesc.text.toString()
-            tblNote.favourite = favourite
-            tblNote.dateModified = Date().time
+        if (validateNote()){
+            CoroutineScope(Dispatchers.IO).launch {
+                tblNote.title = edtTitle.text.toString()
+                tblNote.description = edtDesc.text.toString()
+                tblNote.favourite = favourite
+                tblNote.dateModified = Date().time
 
-            noteControllers.updateNote(tblNote)
-
+                noteControllers.updateNote(tblNote)
+            }
         }
     }
 
@@ -163,20 +164,29 @@ class AddNoteActivity : AppCompatActivity() {
 
 
     private fun saveNote() {
-        CoroutineScope(Dispatchers.IO).launch {
-            tblNote.title = edtTitle.text.toString()
-            tblNote.description = edtDesc.text.toString()
-            tblNote.favourite = favourite
-            tblNote.dateCreated = Date().time
-            tblNote.dateModified = Date().time
+        if (validateNote()){
+            CoroutineScope(Dispatchers.IO).launch {
+                tblNote.title = edtTitle.text.toString()
+                tblNote.description = edtDesc.text.toString()
+                tblNote.favourite = favourite
+                tblNote.dateCreated = Date().time
+                tblNote.dateModified = Date().time
 
-            val noteKey = mDBRef.child(CONST.KEY_TBL_NOTE).push().key
-            tblNote.key = noteKey!!
+                val pkNoteId = noteControllers.insertNote(tblNote)
+                tblNote.pkNoteId = pkNoteId
 
-
-            noteControllers.insertNote(tblNote)
+                withContext(Dispatchers.Main){
+                    Log.d(TAG, "saveNote: $tblNote")
+                }
+            }
         }
+    }
 
+    private fun validateNote(): Boolean {
+        val title = edtTitle.text.isNotEmpty()
+        val desc = edtDesc.text.isNotEmpty()
+
+        return (title || desc)
     }
 
     private fun changesMade() {
@@ -187,6 +197,14 @@ class AddNoteActivity : AppCompatActivity() {
     private fun updateFavourite(id: Int, favourite: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
             noteControllers.updateFavourite(id, favourite)
+        }
+    }
+
+    private fun setStatusBarColor(){
+        window.statusBarColor = ContextCompat.getColor(this, R.color.black)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val decorView = window.decorView
+            decorView.systemUiVisibility = decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
     }
 }

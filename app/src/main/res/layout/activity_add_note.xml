@@ -11,10 +11,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/topViews"
         android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:background="@drawable/bg_cl_top_views"
         android:elevation="10dp"
         android:paddingTop="15dp"
-        android:layout_height="55dp"
-        android:background="@drawable/bg_cl_top_views"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -23,63 +23,62 @@
             android:id="@+id/ivBackAddNoteTodo"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:padding="5dp"
             android:layout_marginStart="8dp"
-            app:tint="@color/white"
-            android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:padding="5dp"
             android:src="@drawable/ic_back"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:tint="@color/white" />
 
         <EditText
-            android:id="@+id/edtTitleNoteTodo"
+            android:id="@+id/edtTitleNote"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:background="@color/transparent"
             android:ems="10"
             android:hint="@string/hintTitle"
-            android:textColorHint="@color/gray"
-            android:textColor="@color/white"
             android:inputType="text"
             android:padding="7dp"
+            android:textColor="@color/white"
+            android:textColorHint="@color/gray"
             app:layout_constraintBottom_toBottomOf="@+id/ivBackAddNoteTodo"
             app:layout_constraintEnd_toStartOf="@+id/ivEditNote"
             app:layout_constraintStart_toEndOf="@+id/ivBackAddNoteTodo"
-            app:layout_constraintTop_toTopOf="@+id/ivBackAddNoteTodo" />
+            app:layout_constraintTop_toTopOf="@+id/ivBackAddNoteTodo"
+            app:layout_constraintVertical_bias="1.0" />
 
 
         <ImageView
             android:id="@+id/ivEditNote"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:padding="5dp"
-            android:layout_marginTop="8dp"
-            app:tint="@color/white"
             android:layout_marginEnd="8dp"
-            android:visibility="gone"
+            android:layout_marginBottom="8dp"
+            android:padding="5dp"
+
             android:src="@drawable/ic_edit"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/ivSaveNoteTodo"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:tint="@color/white" />
 
         <ImageView
             android:id="@+id/ivSaveNoteTodo"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:padding="5dp"
-            android:layout_marginTop="8dp"
-            app:tint="@color/white"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="5dp"
+
             android:src="@drawable/ic_save"
-            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:tint="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <EditText
-        android:id="@+id/edtDescNoteTodo"
+        android:id="@+id/edtDescNote"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
@@ -96,5 +95,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/topViews" />
 
+
+    <ImageView
+        android:id="@+id/ivFavourite_addNote"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:elevation="10dp"
+        android:padding="7dp"
+        android:src="@drawable/ic_unfavourite"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/topViews" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
