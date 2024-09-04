@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-//    id("kotlin-kapt")
+    id("kotlin-kapt")
     alias(libs.plugins.google.gms.google.services)
 }
 
@@ -51,13 +51,13 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
 
-//    val room_version = "2.6.1"
-//    implementation("androidx.room:room-runtime:$room_version")
-//    annotationProcessor("androidx.room:room-compiler:$room_version")
-//    // To use Kotlin Symbol Processing (KSP)
-//    kapt("androidx.room:room-compiler:$room_version")
-//    // optional - Kotlin Extensions and Coroutines support for Room
-//    implementation("androidx.room:room-ktx:$room_version")
+    val room_version = "2.6.1"
+    implementation("androidx.room:room-runtime:$room_version")
+    annotationProcessor("androidx.room:room-compiler:$room_version")
+    // To use Kotlin Symbol Processing (KSP)
+    kapt("androidx.room:room-compiler:$room_version")
+    // optional - Kotlin Extensions and Coroutines support for Room
+    implementation("androidx.room:room-ktx:$room_version")
 
     implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
 

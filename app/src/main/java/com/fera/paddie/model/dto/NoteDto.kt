@@ -13,7 +13,7 @@ class NoteDto(private val application: Application) {
     private val noteCol = Firebase.firestore.collection(CONST.KEY_TBL_NOTE)
 
     fun saveOrUpdateNote(note: TblNote){
-        noteCol.document(note.pkNoteTodoId.toString())
+        noteCol.document(note.pkNoteId.toString())
             .set(note)
             .addOnSuccessListener {
                 Toast.makeText(application.applicationContext, "Saved Successfully...", Toast.LENGTH_SHORT).show()

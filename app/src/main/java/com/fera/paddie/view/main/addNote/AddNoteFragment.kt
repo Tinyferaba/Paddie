@@ -14,9 +14,6 @@ import com.fera.paddie.model.TblNote
 import com.fera.paddie.model.util.CONST
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.Date
 
 class AddNoteFragment : Fragment() {
@@ -60,7 +57,7 @@ class AddNoteFragment : Fragment() {
             goBack()
         }
         ivSave.setOnClickListener {
-            if (tblNote.pkNoteTodoId == null) {
+            if (tblNote.pkNoteId == null) {
                 saveNote()
             } else {
                 updateNote()
@@ -117,7 +114,7 @@ class AddNoteFragment : Fragment() {
             "title" to edtTitle.text.toString()
         )
 
-        mDBRef.child(CONST.KEY_TBL_NOTE).child(tblNote.pkNoteTodoId!!)
+        mDBRef.child(CONST.KEY_TBL_NOTE).child(tblNote.key!!)
             .updateChildren(updates)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful){
@@ -180,7 +177,7 @@ class AddNoteFragment : Fragment() {
         tblNote.dateModified = Date().time
 
         val noteKey = mDBRef.child(CONST.KEY_TBL_NOTE).push().key
-        tblNote.pkNoteTodoId = noteKey!!
+        tblNote.key = noteKey!!
 
         mDBRef.child(CONST.KEY_TBL_NOTE).child(noteKey).setValue(tblNote)
             .addOnCompleteListener { task ->

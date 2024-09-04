@@ -1,7 +1,6 @@
 package com.fera.paddie.view.uploadToCloud
 
 import android.content.Context
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,16 +8,9 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.model.TblNote
-import com.fera.paddie.util.DateFormatter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 
 class AdapterUploadNoteList(private val context: Context, private var noteList: List<TblNote>, private val parentActivity: UploadToCloudActivity): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
@@ -67,7 +59,7 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
             tvDate.visibility = View.GONE
 
             ivDelete.setOnClickListener {
-                parentActivity.deleteNote(noteList[position].pkNoteTodoId!!)
+                parentActivity.deleteNote(noteList[position].pkNoteId!!)
             }
 
 //            if(noteList[position].isFavourite){

@@ -6,20 +6,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.util.DateFormatter
+import com.fera.paddie.view.main.MainActivity
 import java.util.Date
 
 
-class AdapterNoteList(private val context: Context, private var noteList: List<TblNote>, private val fragment: HomeFragment): RecyclerView.Adapter<AdapterNoteList.MyViewHolder>() {
+class AdapterNoteList(private val context: Context, private var noteList: List<TblNote>, private val parentAct: MainActivity): RecyclerView.Adapter<AdapterNoteList.MyViewHolder>() {
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
-        fun deleteNote(id: String)
-        fun updateFavourite(id: String, isFavourite: Boolean)
-        suspend fun getNote(id: String): TblNote
-        fun navigateToAddNoteFragment(id: String)
+        fun deleteNote(id: Int)
+        fun updateFavourite(id: Int, favourite: Boolean)
+        fun navigateToAddNoteFragment(id: Int)
     }
 
     class MyViewHolder(i: View): RecyclerView.ViewHolder(i) {
@@ -27,7 +28,7 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
         val tvDate: TextView = i.findViewById(R.id.tvNoteDateListItem)
         val tvDesc: TextView = i.findViewById(R.id.tvNoteDescListItem)
         val ivDelete: ImageView = i.findViewById(R.id.ivDeleteNoteListItem)
-//        val ivFavourite: ImageView = i.findViewById(R.id.ivFavouriteNoteListItem)
+        val ivFavourite: ImageView = i.findViewById(R.id.ivFavouriteNoteListItem)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -56,38 +57,40 @@ class AdapterNoteList(private val context: Context, private var noteList: List<T
             tvDate.text = DateFormatter.formatDate(Date(noteList[position].dateModified))
 
             ivDelete.setOnClickListener {
-                fragment.deleteNote(noteList[position].pkNoteTodoId!!)
+                parentAct.deleteNote(noteList[position].pkNoteId!!)
             }
 
-//            if(noteList[position].isFavourite){
-//                ivFavourite.setImageResource(R.drawable.ic_favourite)
-//            } else {
-//                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
-//            }
-//
-//            ivFavourite.setOnClickListener {
-//                val fav = !noteList[position].isFavourite
-//
-//                if(fav){
-//                    ivFavourite.setImageResource(R.drawable.ic_favourite)
-//                } else {
-//                    ivFavourite.setImageResource(R.drawable.ic_unfavourite)
-//                }
-//
-//                noteList[position].isFavourite = fav
-//                fragment.updateFavourite(noteList[position].pkNoteTodoId!!, fav)
-//            }
+            if(noteList[position].favourite){
+                ivFavourite.setImageResource(R.drawable.ic_favourite)
+            } else {
+                ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+            }
+
+            ivFavourite.setOnClickListener {
+                val fav = !noteList[position].favourite
+
+                if(fav){
+                    ivFavourite.setImageResource(R.drawable.ic_favourite)
+                } else {
+                    ivFavourite.setImageResource(R.drawable.ic_unfavourite)
+                }
+
+                noteList[position].favourite = fav
+                parentAct.updateFavourite(noteList[position].pkNoteId!!, fav)
+
+                notifyItemChanged(position)
+            }
 
             //todo: Complete this functionality
-//            itemView.setOnLongClickListener {
-//                val color = ContextCompat.getColor(itemView.context, R.color.light_green)
-//                itemView.scaleX = 1.05f
-//                itemView.scaleY = 1.02f
-//                true
-//            }
+            itemView.setOnLongClickListener {
+                val color = ContextCompat.getColor(itemView.context, R.color.light_green)
+                itemView.scaleX = 1.05f
+                itemView.scaleY = 1.02f
+                true
+            }
 
             itemView.setOnClickListener {
-                fragment.navigateToAddNoteFragment(noteList[position].pkNoteTodoId!!)
+                parentAct.navigateToAddNoteFragment(noteList[position].pkNoteId!!)
             }
         }
     }

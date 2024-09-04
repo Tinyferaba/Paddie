@@ -13,6 +13,9 @@
         android:theme="@style/Theme.Paddie.BlackStatusBar"
         tools:targetApi="31">
         <activity
+            android:name=".view.main.addNote.AddNoteActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.uploadToCloud.UploadToCloudActivity"
             android:exported="false" />
         <activity
