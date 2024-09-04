@@ -159,6 +159,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
     override fun updateNote(tblNote: TblNote) {
         CoroutineScope(Dispatchers.IO).launch {
+            tblNote.updated = true
             noteControllers.updateNote(tblNote)
         }
     }

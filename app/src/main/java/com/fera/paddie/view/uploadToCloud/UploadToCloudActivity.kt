@@ -132,13 +132,38 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         noteList.forEach { tblNote ->
             if (tblNote.key == null) {
                 val key = mDBRef.child(CONST.KEY_TBL_NOTE).push().key
-
                 tblNote.key = key
-                noteControllers.updateNote(tblNote)
-
 
                 mDBRef.child(CONST.KEY_TBL_NOTE).child(key!!)
                     .setValue(tblNote)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            uploadedList.add(tblNote.pkNoteId!!)
+                            totalUploaded++
+                            progress++
+
+                            pbUploadStatus.progress = progress
+                        } else {
+                            errorList.add(tblNote.pkNoteId!!)
+                            totalError++
+
+                            Toast.makeText(this, "Problem: ${task.exception}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+            } else if (tblNote.updated){
+                val key = tblNote.key
+
+                tblNote.key = key
+
+                val updated = mapOf<String, Any>(
+                    "title" to tblNote.title.toString(),
+                    "description" to tblNote.description.toString(),
+                    "favourite" to tblNote.favourite,
+                    "dateModified" to tblNote.dateModified
+                )
+
+                mDBRef.child(CONST.KEY_TBL_NOTE).child(key!!)
+                    .updateChildren(updated)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             uploadedList.add(tblNote.pkNoteId!!)

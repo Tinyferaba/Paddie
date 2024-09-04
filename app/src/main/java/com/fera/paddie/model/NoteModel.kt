@@ -16,7 +16,8 @@ data class TblNote(
     var description: String? = null,
     var favourite: Boolean = false,
     var dateCreated: Long = System.currentTimeMillis(),
-    var dateModified: Long = System.currentTimeMillis()
+    var dateModified: Long = System.currentTimeMillis(),
+    var updated: Boolean = false
 ) : Parcelable {
 
     // Empty constructor
@@ -27,19 +28,21 @@ data class TblNote(
         description = null,
         favourite = false,
         dateCreated = System.currentTimeMillis(),
-        dateModified = System.currentTimeMillis()
+        dateModified = System.currentTimeMillis(),
+        updated = false
     )
 
-    // Parcelable constructor
     constructor(parcel: Parcel) : this(
-        pkNoteId = parcel.readValue(Int::class.java.classLoader) as? Int,
-        key = parcel.readString(),
-        title = parcel.readString(),
-        description = parcel.readString(),
-        favourite = parcel.readByte() != 0.toByte(),
-        dateCreated = parcel.readLong(),
-        dateModified = parcel.readLong()
-    )
+        parcel.readValue(Int::class.java.classLoader) as? Int,
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readByte() != 0.toByte(),
+        parcel.readLong(),
+        parcel.readLong(),
+        parcel.readByte() != 0.toByte()
+    ) {
+    }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(pkNoteId)
@@ -49,12 +52,20 @@ data class TblNote(
         parcel.writeByte(if (favourite) 1 else 0)
         parcel.writeLong(dateCreated)
         parcel.writeLong(dateModified)
+        parcel.writeByte(if (updated) 1 else 0)
     }
 
-    override fun describeContents(): Int = 0
+    override fun describeContents(): Int {
+        return 0
+    }
 
     companion object CREATOR : Parcelable.Creator<TblNote> {
-        override fun createFromParcel(parcel: Parcel): TblNote = TblNote(parcel)
-        override fun newArray(size: Int): Array<TblNote?> = arrayOfNulls(size)
+        override fun createFromParcel(parcel: Parcel): TblNote {
+            return TblNote(parcel)
+        }
+
+        override fun newArray(size: Int): Array<TblNote?> {
+            return arrayOfNulls(size)
+        }
     }
 }

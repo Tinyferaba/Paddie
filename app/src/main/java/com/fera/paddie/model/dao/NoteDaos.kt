@@ -16,7 +16,7 @@ interface NoteDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(tblNote: TblNote)
 
-    @Query("update tbl_note set favourite = :isFavourite where pkNoteId = :id")
+    @Query("update tbl_note set favourite = :isFavourite, updated = 1 where pkNoteId = :id")
     suspend fun updateFavourite(id: Int, isFavourite: Boolean)
 
     @Query("delete from tbl_note where pkNoteId = :id")
