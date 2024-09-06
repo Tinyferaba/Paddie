@@ -5,33 +5,53 @@
     android:layout_width="match_parent"
     android:layout_height="176dp">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginBottom="4dp"
-        android:src="@drawable/ic_user_account"
-        app:layout_constraintBottom_toTopOf="@+id/tvUsername"
-        app:layout_constraintEnd_toEndOf="@+id/tvUsername"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvUsername" />
 
     <TextView
-        android:id="@+id/tvUsername"
+        android:id="@+id/tvLogin_sideDrawer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:textStyle="bold|italic"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:text="@string/login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/sIvProfilePhoto_sideDrawer"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:shapeAppearanceOverlay="@style/circular"
+        android:scaleType="centerCrop"
+        app:strokeWidth="1dp"
+        android:padding="2dp"
+        app:strokeColor="@color/black"
+        android:layout_marginTop="16dp"
+        android:src="@drawable/kamake"
+        app:layout_constraintBottom_toTopOf="@+id/tvName_sideDrawer"
+        app:layout_constraintEnd_toEndOf="@+id/tvName_sideDrawer"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/tvName_sideDrawer"/>
+
+    <TextView
+        android:id="@+id/tvName_sideDrawer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="2dp"
-        android:hint="@string/Username"
+        android:hint="@string/name"
         android:textColor="@color/black"
         android:textStyle="italic"
-        app:layout_constraintBottom_toTopOf="@+id/tvMail"
+        app:layout_constraintBottom_toTopOf="@+id/tvMail_sideDrawer"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/tvMail" />
+        app:layout_constraintStart_toStartOf="@+id/tvMail_sideDrawer" />
 
     <TextView
-        android:id="@+id/tvMail"
+        android:id="@+id/tvMail_sideDrawer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"

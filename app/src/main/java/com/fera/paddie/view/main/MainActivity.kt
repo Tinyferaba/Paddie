@@ -3,10 +3,10 @@ package com.fera.paddie.view.main
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -18,12 +18,14 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
+import com.fera.paddie.auth.LoginAndSignUp
 import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.model.util.CONST
 import com.fera.paddie.view.aboutUs.AboutUsActivity
 import com.fera.paddie.view.main.addNote.AddNoteActivity
 import com.fera.paddie.view.uploadToCloud.UploadToCloudActivity
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -35,7 +37,7 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private val TAG = "MainActivity"
 
-    private lateinit var sideDrawer: NavigationView
+    private lateinit var sideNavigation: NavigationView
     private lateinit var drawerLayout: DrawerLayout
 
     private lateinit var ivSearch: ImageView
@@ -43,6 +45,11 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private lateinit var ivAddNote: ImageView //Buttons
     private lateinit var edtSearchField: EditText
     private lateinit var ivShowSideDrawer: ImageView
+
+    private lateinit var tvLogin: TextView
+    private lateinit var sIvProfilePhoto: ShapeableImageView
+    private lateinit var tvName: TextView
+    private lateinit var tvMail: TextView
 
     //######### NOTEs & TODOs List PROPERTY #########//
     private lateinit var rvNoteList: RecyclerView
@@ -70,7 +77,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     }
 
     private fun addActionListeners() {
-        sideDrawer.setNavigationItemSelectedListener {menuItem ->
+        sideNavigation.setNavigationItemSelectedListener { menuItem ->
             when(menuItem.itemId){
                 R.id.menuAboutUs -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
@@ -87,6 +94,10 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
                 else -> {true}
             }
         }
+        tvLogin.setOnClickListener {
+            val intent = Intent(this, LoginAndSignUp::class.java)
+            startActivity(intent)
+        }
         ivAddNote.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             startActivity(intent)
@@ -101,7 +112,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     }
 
     private fun initViews() {
-        sideDrawer = findViewById(R.id.mainSideDrawer)
+        sideNavigation = findViewById(R.id.sideNavigation)
         drawerLayout = findViewById(R.id.mainDrawerLayout)
 
         mDBRef = FirebaseDatabase.getInstance().getReference()
@@ -111,7 +122,12 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         ivClearSearchField = findViewById(R.id.ivClearSearchField)
         ivAddNote = findViewById(R.id.ivAddNote)
         edtSearchField =findViewById(R.id.edtSearchField)
-        ivShowSideDrawer =findViewById(R.id.ivShowSideDrawer)
+        ivShowSideDrawer = findViewById(R.id.ivShowSideDrawer)
+
+        tvLogin = sideNavigation.getHeaderView(0).findViewById(R.id.tvLogin_sideDrawer)
+        sIvProfilePhoto = sideNavigation.getHeaderView(0).findViewById(R.id.sIvProfilePhoto_sideDrawer)
+        tvName = sideNavigation.getHeaderView(0).findViewById(R.id.tvName_sideDrawer)
+        tvMail = sideNavigation.getHeaderView(0).findViewById(R.id.tvMail_sideDrawer)
 
         //######### CONTROLLERS #########//
         noteControllers = NoteControllers(application)
@@ -144,10 +160,14 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
                 adapterNoteList.updateNoteList(noteList)
             }
         } else {
-            CoroutineScope(Dispatchers.IO).launch {
             val searchText = edtSearchField.text.toString()
-                noteControllers.searchNotes(searchText).observe(this@MainActivity) {noteList ->
+
+            CoroutineScope(Dispatchers.IO).launch {
+                noteList.clear()
+                noteList.addAll(noteControllers.searchNotes(searchText))
+                withContext(Dispatchers.Main){
                     adapterNoteList.updateNoteList(noteList)
+                    adapterNoteList.notifyDataSetChanged()
                 }
             }
         }

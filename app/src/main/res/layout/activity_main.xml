@@ -148,7 +148,7 @@
 
 
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/mainSideDrawer"
+        android:id="@+id/sideNavigation"
         android:layout_width="wrap_content"
         android:theme="@style/ThemeOverlay.Material3.Dark"
         android:background="@color/black"

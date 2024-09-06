@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="2dp"
+    android:background="@drawable/bg_round_outline_transparent">
+
+    <com.google.android.material.imageview.ShapeableImageView
+        android:id="@+id/sIvProfilePhoto_listItem"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="5dp"
+        android:layout_marginStart="8dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/kamake"
+        app:shapeAppearanceOverlay="@style/circular" />
+
+    <TextView
+        android:id="@+id/tvUsername_listItem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="8dp"
+        android:textStyle="bold"
+        android:layout_marginBottom="5dp"
+        android:layout_toStartOf="@id/ivDeleteUser_listItem"
+        android:layout_toEndOf="@+id/sIvProfilePhoto_listItem"
+        android:hint="@string/username"
+        android:padding="3dp"
+        android:text="Username"
+        android:textSize="17sp" />
+
+    <ImageView
+        android:id="@+id/ivDeleteUser_listItem"
+        android:layout_width="40dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="4dp"
+        app:srcCompat="@drawable/ic_close" />
+</RelativeLayout>

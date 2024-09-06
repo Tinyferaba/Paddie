@@ -1,5 +1,6 @@
 package com.fera.paddie.view.uploadToCloud
 
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -10,21 +11,30 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
+import com.fera.paddie.auth.LoginAndSignUp
 import com.fera.paddie.controller.NoteControllers
 //import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
+import com.fera.paddie.model.TblUser
 import com.fera.paddie.model.util.CONST
+import com.fera.paddie.view.main.MainActivity
 import com.fera.paddie.view.main.addNote.AddNoteActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -56,10 +66,12 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
     //######### CONTROLLERS PROPERTY #########//
     private lateinit var noteControllers: NoteControllers
 
+    private lateinit var mAuth: FirebaseAuth
     private lateinit var mDBRef: DatabaseReference
 
     //######### CLOUD #########//
-    private var noteList = mutableListOf<TblNote>()
+    private var noteListNew = mutableListOf<TblNote>()
+    private var noteListOld = mutableListOf<TblNote>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,25 +86,41 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         initViews()
         addActionListeners()
         setStatusBarColor()
+        checkSignedInUser()
+    }
+
+    private fun checkSignedInUser() {
+        if (mAuth.currentUser == null){
+            val alert = AlertDialog.Builder(this)
+            alert.setMessage("No Account\nPlease login to backup your notes.")
+                .setCancelable(false)
+                .setTitle("No Account")
+                .setPositiveButton("Login", DialogInterface.OnClickListener { dialog, which ->
+                        val intent = Intent(this, LoginAndSignUp::class.java)
+                        startActivity(intent)
+                        finish()
+                    })
+                .setNeutralButton("Cancel", DialogInterface.OnClickListener { dialog, which ->
+                    onBackPressedDispatcher.onBackPressed()
+                    finish()
+                }).show()
+        }
     }
 
     private fun addActionListeners() {
         chkbxSelectAll.setOnClickListener {
             val checked = chkbxSelectAll.isChecked
-            noteList.clear()
+            noteListNew.clear()
 
             if (checked) {
-                ivUploadToCloud.visibility = View.VISIBLE
+//                ivUploadToCloud.visibility = View.VISIBLE
                 adapterNoteListNew.checkAll(true)
             } else {
-                ivUploadToCloud.visibility = View.GONE
+//                ivUploadToCloud.visibility = View.GONE
                 adapterNoteListNew.checkAll(false)
             }
         }
         ivUploadToCloud.setOnClickListener {
-            //TODO: Upload to Cloud
-            Log.d(TAG, "addActionListeners: $noteList")
-            Toast.makeText(this, "Uploading to CLOUD", Toast.LENGTH_SHORT).show()
             lifecycleScope.launch {
                 uploadToCloud()
             }
@@ -100,6 +128,7 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
     }
 
     private fun initViews() {
+        mAuth = FirebaseAuth.getInstance()
         mDBRef = FirebaseDatabase.getInstance().getReference()
 
         chkbxSelectAll = findViewById(R.id.chkbxSelectAll)
@@ -112,78 +141,95 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         //######### RECYCLER VIEWS #########//
         rvNoteListNew = findViewById(R.id.rvNoteListNew_toCloud)
         rvNoteListNew.layoutManager = LinearLayoutManager(this)
+        adapterNoteListNew = AdapterUploadNoteList(this, noteListNew, this)
+        rvNoteListNew.adapter = adapterNoteListNew
         noteControllers.getAllNewNotes.observe(this) { noteList ->
-            adapterNoteListNew = AdapterUploadNoteList(this, noteList, this)
-            rvNoteListNew.adapter = adapterNoteListNew
+            adapterNoteListNew.updateNoteList(noteList)
         }
 
         rvNoteListOld = findViewById(R.id.rvNoteListUploaded_toCloud)
         rvNoteListOld.layoutManager = LinearLayoutManager(this)
+        adapterNoteListOld = AdapterUploadNoteList(this, noteListOld, this)
+        rvNoteListOld.adapter = adapterNoteListOld
         noteControllers.getAllUploadedNotes.observe(this){ noteList ->
-            adapterNoteListOld = AdapterUploadNoteList(this, noteList, this)
-            rvNoteListOld.adapter = adapterNoteListOld
+            adapterNoteListOld.updateNoteList(noteList)
         }
+
     }
 
     private suspend fun uploadToCloud() {
         pbUploadStatus.visibility = View.VISIBLE
-        pbUploadStatus.max = noteList.size
+        pbUploadStatus.max = noteListNew.size
 
-        noteList.forEach { tblNote ->
-            if (tblNote.key == null) {
-                val key = mDBRef.child(CONST.KEY_TBL_NOTE).push().key
-                tblNote.key = key
+        val uploadScope = lifecycleScope
 
-                mDBRef.child(CONST.KEY_TBL_NOTE).child(key!!)
-                    .setValue(tblNote)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            uploadedList.add(tblNote.pkNoteId!!)
-                            totalUploaded++
-                            progress++
+        val uploadJob = noteListNew.map { tblNote ->
+            uploadScope.launch {
+                if (tblNote.key == null) {
+                    val key = mDBRef.child(CONST.KEY_TBL_NOTE).push().key
 
-                            pbUploadStatus.progress = progress
-                        } else {
-                            errorList.add(tblNote.pkNoteId!!)
-                            totalError++
+                    tblNote.key = key
+                    tblNote.updated = false
 
-                            Toast.makeText(this, "Problem: ${task.exception}", Toast.LENGTH_SHORT).show()
+                    noteControllers.updateNote(tblNote)
+
+                    mDBRef.child(CONST.KEY_TBL_NOTE).child(key!!)
+                        .setValue(tblNote)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                uploadedList.add(tblNote.pkNoteId!!)
+                                totalUploaded++
+                                progress++
+
+                                pbUploadStatus.progress = progress
+                            } else {
+                                errorList.add(tblNote.pkNoteId!!)
+                                totalError++
+
+                                Toast.makeText(applicationContext, "Problem: ${task.exception}", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    }
-            } else if (tblNote.updated){
-                val key = tblNote.key
+                } else if (tblNote.updated){
+                    val key = tblNote.key
 
-                tblNote.key = key
+                    tblNote.key = key
+                    tblNote.updated = false
 
-                val updated = mapOf<String, Any>(
-                    "title" to tblNote.title.toString(),
-                    "description" to tblNote.description.toString(),
-                    "favourite" to tblNote.favourite,
-                    "dateModified" to tblNote.dateModified
-                )
+                    noteControllers.updateNote(tblNote)
 
-                mDBRef.child(CONST.KEY_TBL_NOTE).child(key!!)
-                    .updateChildren(updated)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            uploadedList.add(tblNote.pkNoteId!!)
-                            totalUploaded++
-                            progress++
+                    val updated = mapOf<String, Any>(
+                        "title" to tblNote.title.toString(),
+                        "description" to tblNote.description.toString(),
+                        "favourite" to tblNote.favourite,
+                        "dateModified" to tblNote.dateModified
+                    )
 
-                            pbUploadStatus.progress = progress
-                        } else {
-                            errorList.add(tblNote.pkNoteId!!)
-                            totalError++
+                    mDBRef.child(CONST.KEY_TBL_NOTE).child(key!!)
+                        .updateChildren(updated)
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                uploadedList.add(tblNote.pkNoteId!!)
+                                totalUploaded++
+                                progress++
 
-                            Toast.makeText(this, "Problem: ${task.exception}", Toast.LENGTH_SHORT).show()
+                                pbUploadStatus.progress = progress
+                            } else {
+                                errorList.add(tblNote.pkNoteId!!)
+                                totalError++
+
+                                Toast.makeText(applicationContext, "Problem: ${task.exception}", Toast.LENGTH_SHORT).show()
+                            }
                         }
-                    }
+                }
             }
         }
 
-        delay(3000)
+        uploadJob.forEach { job -> job.join()}
+
         pbUploadStatus.visibility = View.GONE
-        Toast.makeText(this, "Uploaded: $totalUploaded \nError: $totalError", Toast.LENGTH_SHORT).show()
+        withContext(Dispatchers.Main){
+            Toast.makeText(applicationContext, "Uploaded: $totalUploaded \nFailed: $totalError", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun updateNote(tblNote: TblNote) {
@@ -216,6 +262,11 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         }
     }
 
+    override fun clearUploadList() {
+        noteListNew.clear()
+        hideViewsOnEmptyList(noteListNew.isEmpty())
+    }
+
     override suspend fun getNote(id: Int): TblNote {
         return withContext(Dispatchers.IO) {
             noteControllers.getNote(id)
@@ -223,15 +274,27 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
     }
 
     fun addToUploadList(tblNote: TblNote) {
-        noteList.add(tblNote)
+        noteListNew.add(tblNote)
+        hideViewsOnEmptyList(noteListNew.isEmpty())
     }
 
     fun addToUploadList(list: List<TblNote>) {
-        noteList.addAll(list)
+        noteListNew.clear()
+        noteListNew.addAll(list)
+        hideViewsOnEmptyList(noteListNew.isEmpty())
     }
 
     fun removeFromUploadList(tblNote: TblNote) {
-        noteList.remove(tblNote)
+        noteListNew.remove(tblNote)
+        hideViewsOnEmptyList(noteListNew.isEmpty())
+    }
+
+    private fun hideViewsOnEmptyList(listIsEmpty: Boolean){
+        if (listIsEmpty){
+            ivUploadToCloud.visibility = View.GONE
+        } else {
+            ivUploadToCloud.visibility = View.VISIBLE
+        }
     }
 
     private fun setStatusBarColor() {

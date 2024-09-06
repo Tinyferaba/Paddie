@@ -6,13 +6,12 @@ import androidx.lifecycle.LiveData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import com.fera.paddie.model.TblNote
-import com.fera.paddie.model.database.NoteTodoDatabase
-import com.fera.paddie.model.dto.NoteDto
+import com.fera.paddie.model.database.NoteDatabase
 
 
 class NoteControllers (application: Application): AndroidViewModel(application) {
-    private val noteDao = NoteTodoDatabase.getDatabase(application).noteDao()
-    private val noteDto = NoteDto(application)
+    private val noteDao = NoteDatabase.getDatabase(application).noteDao()
+
 
     //TODO: Write dto
 
@@ -35,7 +34,7 @@ class NoteControllers (application: Application): AndroidViewModel(application) 
         }
     }
 
-    fun searchNotes(searchText: String): LiveData<List<TblNote>>{
+    fun searchNotes(searchText: String): List<TblNote>{
         return noteDao.searchNotes(searchText)
     }
 

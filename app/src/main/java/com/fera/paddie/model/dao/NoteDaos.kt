@@ -26,10 +26,10 @@ interface NoteDao {
     @Query("""select * from tbl_note""")
     fun getAllNotes(): LiveData<List<TblNote>>
 
-    @Query("""select * from tbl_note where `key` is null""")
+    @Query("""select * from tbl_note where `key` is null or updated = 1""")
     fun getAllNewNotes(): LiveData<List<TblNote>>
 
-    @Query("""select * from tbl_note where `key` is not null""")
+    @Query("""select * from tbl_note where `key` is not null and updated = 0""")
     fun getAllUploadedNotes(): LiveData<List<TblNote>>
 
     @Query("""
@@ -37,7 +37,7 @@ interface NoteDao {
             where N.title like '%' || :searchText || '%'
                 or N.description like '%' || :searchText || '%'
     """)
-    fun searchNotes(searchText: String): LiveData<List<TblNote>>
+    fun searchNotes(searchText: String): List<TblNote>
 
     @Query("select * from tbl_note where pkNoteId = :id")
     fun getNote(id: Int): TblNote

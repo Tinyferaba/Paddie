@@ -20,6 +20,7 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
         fun updateFavourite(id: Int, isFavourite: Boolean)
         suspend fun getNote(id: Int): TblNote
         fun navigateToAddNoteFragment(id: Int)
+        fun clearUploadList()
     }
 
     private var allChecked = false
@@ -49,7 +50,6 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.apply {
-
             tvTitle.text = noteList[position].title
             var desc = noteList[position].description
             desc?.let {
@@ -58,6 +58,9 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
             }
             tvDesc.text = desc
             tvDate.visibility = View.GONE
+
+            if (noteList[position].pkNoteId != null && !noteList[position].updated)
+                chkbxSelectBox.visibility = View.GONE
 
             ivDelete.setOnClickListener {
                 parentActivity.deleteNote(noteList[position].pkNoteId!!)
@@ -109,7 +112,11 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
 
     fun checkAll(check: Boolean){
         allChecked = check
-        parentActivity.addToUploadList(noteList)
+        if (check){
+            parentActivity.addToUploadList(noteList)
+        } else {
+            parentActivity.clearUploadList()
+        }
         notifyDataSetChanged()
     }
 }

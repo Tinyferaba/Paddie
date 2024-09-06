@@ -4,14 +4,27 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.WindowInsetsController
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
+import com.fera.paddie.controller.DeveloperController
+import com.fera.paddie.model.TblDevelopers
 
 class AboutUsActivity : AppCompatActivity() {
+    private val TAG = "AboutUsActivity"
+
+    //######### VIEW #########//
+    private lateinit var rvDevelopers: RecyclerView
+    private lateinit var adapterDevelopers: AdapterDevelopers
+    private lateinit var developerController: DeveloperController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,7 +35,18 @@ class AboutUsActivity : AppCompatActivity() {
             insets
         }
 
+        initViews()
+
         setStatusBarColor()
+    }
+
+    private fun initViews() {
+        developerController = ViewModelProvider(this)[DeveloperController::class.java]
+
+        rvDevelopers = findViewById(R.id.rvDeveloper_aboutUs)
+        rvDevelopers.layoutManager = LinearLayoutManager(this)
+        adapterDevelopers = AdapterDevelopers(this, developerController.getAllDevelopers())
+        rvDevelopers.adapter = adapterDevelopers
     }
 
     private fun setStatusBarColor(){
