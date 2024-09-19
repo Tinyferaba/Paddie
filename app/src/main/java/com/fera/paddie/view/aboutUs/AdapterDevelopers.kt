@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fera.paddie.R
 import com.fera.paddie.model.TblDevelopers
 import com.google.android.material.imageview.ShapeableImageView
@@ -22,9 +23,17 @@ class AdapterDevelopers(private val context: Context, private val developers: Li
 
     override fun onBindViewHolder(holder: DeveloperViewHolder, position: Int) {
         holder.apply {
+            Glide.with(context)
+                .load(developers[position].profilePhoto)
+                .placeholder(R.drawable.kamake)
+                .centerCrop()
+                .into(sIvDevPhoto)
 
-            tvDevName.text = developers[position].firstName
+            val fullName = developers[position].firstName?.plus(" ${developers[position].lastName}")
+
+            tvDevName.text = fullName
             tvDevID.text = developers[position].stdId
+            tvDevEmail.text = developers[position].email
         }
     }
 
@@ -32,5 +41,6 @@ class AdapterDevelopers(private val context: Context, private val developers: Li
         val sIvDevPhoto = v.findViewById<ShapeableImageView>(R.id.sIvDeveloperPhoto_listItem)
         val tvDevName = v.findViewById<TextView>(R.id.tvDeveloperName_listItem)
         val tvDevID = v.findViewById<TextView>(R.id.tvDeveloperId_listItem)
+        val tvDevEmail = v.findViewById<TextView>(R.id.tvDeveloperEmail_listItem)
     }
 }

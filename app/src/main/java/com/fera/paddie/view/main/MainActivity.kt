@@ -1,12 +1,17 @@
 package com.fera.paddie.view.main
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -15,20 +20,28 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.fera.paddie.R
 import com.fera.paddie.auth.LoginAndSignUp
+import com.fera.paddie.controller.DeveloperController
 import com.fera.paddie.controller.NoteControllers
+import com.fera.paddie.model.TblDevelopers
 import com.fera.paddie.model.TblNote
+import com.fera.paddie.model.TblUser
 import com.fera.paddie.model.util.CONST
 import com.fera.paddie.view.aboutUs.AboutUsActivity
 import com.fera.paddie.view.main.addNote.AddNoteActivity
 import com.fera.paddie.view.uploadToCloud.UploadToCloudActivity
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -74,6 +87,72 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         addActionListeners()
 
         setStatusBarColor()
+
+        loadUserData()
+
+//        lifecycleScope.launch {
+//            loadDemoData()
+//        }
+    }
+
+    private fun loadUserData() {
+        val uid = FirebaseAuth.getInstance().uid
+        if (uid != null){
+            mDBRef.child(CONST.fDB_DIR_USER).child(uid)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful){
+                        val user = task.result.getValue(TblUser::class.java)
+
+                        if (user != null){
+                            val name = "${user.firstName} ${user.lastName}"
+                            val email = user.email
+
+                            tvMail.text = email
+                            tvName.text = name
+                            user.photo?.let { photoURI ->
+                                Glide.with(this)
+                                    .load(photoURI)
+                                    .placeholder(R.drawable.kamake)
+                                    .centerCrop()
+                                    .into(sIvProfilePhoto)
+                            }
+                            Log.d(TAG, "loadUserData: ${user.photo}")
+                        }
+                    } else {
+                        Toast.makeText(this, "Error loading User data: ${task.exception}: ", Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+    }
+
+    private suspend fun loadDemoData() {
+        val photo1 = ContextCompat.getDrawable(this, R.drawable.image_1)
+        val photo2 = ContextCompat.getDrawable(this, R.drawable.image_2)
+        val photo3 = ContextCompat.getDrawable(this, R.drawable.image_3)
+        val photo4 = ContextCompat.getDrawable(this, R.drawable.image_4)
+
+        val devList = listOf(
+            TblDevelopers("22302067", "Noody", "HAGAYO", "22302067noha@student.pnguot.ac.pg", getBitmap(photo1!!)),
+            TblDevelopers("22302074", "Boi", "KOBLA", "22302074boko@student.pnguot.ac.pg", getBitmap(photo2!!)),
+            TblDevelopers("22301822", "Shima Delilah", "DENSON", "22301822shde@student.pnguot.ac.pg", getBitmap(photo3!!)),
+            TblDevelopers("22301788", "Renee", "ATTMANKIA", "22301788reat@student.pnguot.ac.pg", getBitmap(photo4!!))
+        )
+
+        val uploadScope = CoroutineScope(Dispatchers.IO)
+        val devControllers = ViewModelProvider(this)[DeveloperController::class.java]
+
+        val uploadJob = devList.map { tblDevelopers ->
+            uploadScope.launch {
+                devControllers.insertDeveloper(tblDevelopers)
+            }
+        }
+        uploadJob.forEach { job -> job.join()}
+
+    }
+
+    private fun getBitmap(drawable: Drawable): Bitmap {
+        return (drawable as BitmapDrawable).bitmap
     }
 
     private fun addActionListeners() {
@@ -201,7 +280,6 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
             noteControllers.getNote(id)
         }
     }
-
 
     private fun showHideSideDrawer() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))

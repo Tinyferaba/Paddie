@@ -12,29 +12,16 @@ data class TblUser(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo("pkUserId")
     val pkUserId: Int = 0,
-    val uid: String?,
-    val firstName: String?,
-    val middleName: String?,
-    val lastName: String?,
-    val email: String?,
-    val password: String?,
-    val gender: String?,
-    val photo: Bitmap?,
-    val registeredDate: Long?
+    val uid: String?=null,
+    val firstName: String?=null,
+    val middleName: String?=null,
+    val lastName: String?=null,
+    val email: String?=null,
+    val password: String?=null,
+    val gender: String?=null,
+    val photo: String?=null,
+    val registeredDate: Long?=null
 ): Parcelable {
-    constructor(): this(
-        pkUserId = 0,
-        uid = null,
-        firstName = null,
-        middleName = null,
-        lastName = null,
-        password = null,
-        email = null,
-        gender = null,
-        photo = null,
-        registeredDate = null
-    )
-
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString(),
@@ -44,7 +31,7 @@ data class TblUser(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readParcelable(Bitmap::class.java.classLoader),
+        parcel.readString(),
         parcel.readValue(Long::class.java.classLoader) as? Long
     ) {
     }
@@ -58,7 +45,7 @@ data class TblUser(
         parcel.writeString(email)
         parcel.writeString(password)
         parcel.writeString(gender)
-        parcel.writeParcelable(photo, flags)
+        parcel.writeString(photo)
         parcel.writeValue(registeredDate)
     }
 

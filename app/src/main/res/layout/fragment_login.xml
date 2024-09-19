@@ -13,7 +13,7 @@
     <TextView
         android:id="@+id/tvCreateAccount"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
+        android:layout_height="75dp"
         android:background="@drawable/bg_cl_top_views"
         android:gravity="center"
         android:text="Login"

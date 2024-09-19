@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mainDrawerLayout"
+    tools:openDrawer="start"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_main"
@@ -29,7 +30,7 @@
             android:layout_width="match_parent"
             android:id="@+id/actionBar"
             android:paddingTop="15dp"
-            android:layout_height="65dp"
+            android:layout_height="75dp"
             android:background="@drawable/bg_cl_top_views"
             android:elevation="10dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -41,18 +42,20 @@
                 android:layout_width="30dp"
                 android:layout_height="25dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginBottom="8dp"
                 android:src="@drawable/ic_density"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0"
                 app:tint="@color/white" />
 
             <TextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
                 android:gravity="center"
-                android:padding="4dp"
                 android:text="Paddie"
                 android:textColor="@color/white"
                 android:textSize="27sp"
@@ -60,7 +63,8 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout

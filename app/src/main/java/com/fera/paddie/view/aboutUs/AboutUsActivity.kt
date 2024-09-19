@@ -11,11 +11,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.controller.DeveloperController
 import com.fera.paddie.model.TblDevelopers
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class AboutUsActivity : AppCompatActivity() {
     private val TAG = "AboutUsActivity"
@@ -24,6 +29,7 @@ class AboutUsActivity : AppCompatActivity() {
     private lateinit var rvDevelopers: RecyclerView
     private lateinit var adapterDevelopers: AdapterDevelopers
     private lateinit var developerController: DeveloperController
+    private var developerList = emptyList<TblDevelopers>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +51,16 @@ class AboutUsActivity : AppCompatActivity() {
 
         rvDevelopers = findViewById(R.id.rvDeveloper_aboutUs)
         rvDevelopers.layoutManager = LinearLayoutManager(this)
-        adapterDevelopers = AdapterDevelopers(this, developerController.getAllDevelopers())
-        rvDevelopers.adapter = adapterDevelopers
+
+
+        CoroutineScope(Dispatchers.IO).launch {
+            developerList = developerController.getAllDevelopers()
+
+            withContext(Dispatchers.Main){
+                adapterDevelopers = AdapterDevelopers(this@AboutUsActivity, developerList)
+                rvDevelopers.adapter = adapterDevelopers
+            }
+        }
     }
 
     private fun setStatusBarColor(){

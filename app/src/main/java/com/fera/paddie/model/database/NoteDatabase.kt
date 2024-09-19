@@ -17,7 +17,7 @@ import com.fera.paddie.model.typeConverters.Converters
 @Database(
     entities = [TblNote::class, TblUser::class, TblDevelopers::class],
     version = 1,
-    exportSchema = false
+    exportSchema = true
 )
 @TypeConverters(value = [Converters::class])
 abstract class NoteDatabase: RoomDatabase() {

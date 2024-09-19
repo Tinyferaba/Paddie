@@ -101,17 +101,17 @@ class AddNoteActivity : AppCompatActivity() {
         noteControllers = NoteControllers(application)
 
         //######### VIEWS #########//
-        ivBack =findViewById(R.id.ivBackAddNoteTodo)
-        ivSave =findViewById(R.id.ivSaveNoteTodo)
-        ivEdit =findViewById(R.id.ivEditNote)
-        edtTitle =findViewById(R.id.edtTitleNote)
-        edtDesc =findViewById(R.id.edtDescNote)
-        ivFavourite =findViewById(R.id.ivFavourite_addNote)
+        ivBack = findViewById(R.id.ivBackAddNoteTodo)
+        ivSave = findViewById(R.id.ivSaveNoteTodo)
+        ivEdit = findViewById(R.id.ivEditNote)
+        edtTitle = findViewById(R.id.edtTitleNote)
+        edtDesc = findViewById(R.id.edtDescNote)
+        ivFavourite = findViewById(R.id.ivFavourite_addNote)
     }
 
 
     private fun updateNote() {
-        if (validateNote()){
+        if (validateNote()) {
             CoroutineScope(Dispatchers.IO).launch {
                 tblNote.title = edtTitle.text.toString()
                 tblNote.description = edtDesc.text.toString()
@@ -164,7 +164,7 @@ class AddNoteActivity : AppCompatActivity() {
 
 
     private fun saveNote() {
-        if (validateNote()){
+        if (validateNote()) {
             CoroutineScope(Dispatchers.IO).launch {
                 tblNote.title = edtTitle.text.toString()
                 tblNote.description = edtDesc.text.toString()
@@ -175,7 +175,7 @@ class AddNoteActivity : AppCompatActivity() {
                 val pkNoteId = noteControllers.insertNote(tblNote)
                 tblNote.pkNoteId = pkNoteId
 
-                withContext(Dispatchers.Main){
+                withContext(Dispatchers.Main) {
                     Log.d(TAG, "saveNote: $tblNote")
                 }
             }
@@ -200,11 +200,12 @@ class AddNoteActivity : AppCompatActivity() {
         }
     }
 
-    private fun setStatusBarColor(){
+    private fun setStatusBarColor() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.black)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val decorView = window.decorView
-            decorView.systemUiVisibility = decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
+            decorView.systemUiVisibility =
+                decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
         }
     }
 }

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
+    android:background="@drawable/bg_main"
     android:layout_height="match_parent"
     tools:context=".view.main.addNote.AddNoteActivity">
 
@@ -63,18 +64,18 @@
             app:layout_constraintEnd_toStartOf="@+id/ivSaveNoteTodo"
             app:tint="@color/white" />
 
-        <ImageView
-            android:id="@+id/ivSaveNoteTodo"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:padding="5dp"
-
-            android:src="@drawable/ic_save"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:tint="@color/white" />
+            <ImageView
+                android:id="@+id/ivSaveNoteTodo"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:padding="5dp"
+                android:visibility="gone"
+                android:src="@drawable/ic_save"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:tint="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <EditText
