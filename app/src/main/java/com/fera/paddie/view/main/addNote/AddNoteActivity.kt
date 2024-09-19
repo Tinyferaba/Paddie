@@ -88,7 +88,8 @@ class AddNoteActivity : AppCompatActivity() {
             }
 
             tblNote.favourite = favourite
-            updateFavourite(tblNote.pkNoteId!!, favourite)
+            if (tblNote.pkNoteId != null)
+                updateFavourite(tblNote.pkNoteId!!, favourite)
         }
 
         //######### LISTEN TO CHANGES MADE #########//
@@ -198,6 +199,12 @@ class AddNoteActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             noteControllers.updateFavourite(id, favourite)
         }
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        if (changesMade)
+            saveNote()
     }
 
     private fun setStatusBarColor() {

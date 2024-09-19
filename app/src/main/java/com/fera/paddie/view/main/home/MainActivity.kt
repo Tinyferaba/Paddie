@@ -1,4 +1,4 @@
-package com.fera.paddie.view.main
+package com.fera.paddie.view.main.home
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -21,7 +21,6 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -41,7 +40,6 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -50,6 +48,10 @@ import kotlinx.coroutines.withContext
 class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private val TAG = "MainActivity"
 
+    //######### CONST #########//
+    private var loggedIn = false
+
+    //######### VIEWS #########//
     private lateinit var sideNavigation: NavigationView
     private lateinit var drawerLayout: DrawerLayout
 
@@ -98,6 +100,9 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private fun loadUserData() {
         val uid = FirebaseAuth.getInstance().uid
         if (uid != null){
+            tvLogin.text = "Logout"
+            loggedIn = true
+
             mDBRef.child(CONST.fDB_DIR_USER).child(uid)
                 .get()
                 .addOnCompleteListener { task ->
@@ -174,8 +179,13 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
             }
         }
         tvLogin.setOnClickListener {
-            val intent = Intent(this, LoginAndSignUp::class.java)
-            startActivity(intent)
+            if (loggedIn){
+                logoutUser()
+            } else {
+                val intent = Intent(this, LoginAndSignUp::class.java)
+                startActivity(intent)
+            }
+
         }
         ivAddNote.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
@@ -188,6 +198,15 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         ivClearSearchField.setOnClickListener { clearSearchField() }
         ivSearch.setOnClickListener { searchNotes() }
         edtSearchField.addTextChangedListener { searchNotes() }
+    }
+
+    private fun logoutUser() {
+        FirebaseAuth.getInstance().signOut()
+        loggedIn = false
+        tvLogin.text = "Login"
+        sIvProfilePhoto.setImageResource(R.drawable.kamake)
+        tvName.text = null
+        tvMail.text = null
     }
 
     private fun initViews() {

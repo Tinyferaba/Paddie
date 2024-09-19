@@ -26,7 +26,6 @@ import com.fera.paddie.R
 import com.fera.paddie.controller.UserController
 import com.fera.paddie.model.TblUser
 import com.fera.paddie.model.util.CONST
-import com.fera.paddie.view.main.MainActivity
 import com.fera.paddie.view.uploadToCloud.UploadToCloudActivity
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputEditText
@@ -48,7 +47,7 @@ class SignUpFragment : Fragment() {
     private lateinit var tvLogin: TextView
     private lateinit var sIvProfilePhoto: ShapeableImageView
     private lateinit var btnAddProfilePic: Button
-    private var uriProfilePhoto: Uri?=null
+    private var uriProfilePhoto: Uri? = null
     private lateinit var tiEdtFirstName: TextInputEditText
     private lateinit var tiEdtMiddleName: TextInputEditText
     private lateinit var tiEdtLastName: TextInputEditText
@@ -184,7 +183,8 @@ class SignUpFragment : Fragment() {
     }
 
     private fun login(uid: String) {
-        val editor = requireContext().getSharedPreferences(CONST.SHARED_PREF_db, Context.MODE_PRIVATE).edit()
+        val editor =
+            requireContext().getSharedPreferences(CONST.SHARED_PREF_db, Context.MODE_PRIVATE).edit()
         editor.putString(CONST.SHARED_PREF_USER_ID, uid)
         editor.putBoolean(CONST.SHARED_PREF_IS_USER_SIGNED_IN, true)
         editor.apply()
@@ -195,9 +195,7 @@ class SignUpFragment : Fragment() {
     }
 
     private fun addUserToDB(uid: String, firstName: String, middleName: String, lastName: String, email: String, password: String, gender: String) {
-        var profileSaved = false
-
-        if (uriProfilePhoto != null){
+        if (uriProfilePhoto != null) {
             val fileExt = getFileExtension(requireContext(), uriProfilePhoto!!)
 
             var photoURI: String?
@@ -205,8 +203,9 @@ class SignUpFragment : Fragment() {
 
             Log.d(TAG, "addUserToDB: $photoName")
 
-            val storageRef = mStorageRef.child(CONST.fDB_DIR_IMG).child(CONST.fDB_DIR_IMG_PROF).child(photoName!!)
-            storageRef.putFile(uriProfilePhoto!!).addOnCompleteListener { task->
+            val storageRef = mStorageRef.child(CONST.fDB_DIR_IMG).child(CONST.fDB_DIR_IMG_PROF)
+                .child(photoName!!)
+            storageRef.putFile(uriProfilePhoto!!).addOnCompleteListener { task ->
                 storageRef.downloadUrl.addOnCompleteListener { uri ->
                     photoURI = uri.result.toString()
 
@@ -218,7 +217,7 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    private fun addUserRemotely(user: TblUser){
+    private fun addUserRemotely(user: TblUser) {
         mDBRef.child(CONST.fDB_DIR_USER)
             .child(user.uid!!)
             .setValue(user)
@@ -231,7 +230,7 @@ class SignUpFragment : Fragment() {
             }
     }
 
-    private fun addUserLocally(user:TblUser){
+    private fun addUserLocally(user: TblUser) {
         CoroutineScope(Dispatchers.IO).launch {
             userController.insertUser(user)
         }
@@ -249,7 +248,15 @@ class SignUpFragment : Fragment() {
             mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        addUserToDB(task.result.user!!.uid, firstName, middleName, lastName, email, password, gender)
+                        addUserToDB(
+                            task.result.user!!.uid,
+                            firstName,
+                            middleName,
+                            lastName,
+                            email,
+                            password,
+                            gender
+                        )
                         login(task.result.user!!.uid)
                         Log.d(TAG, "createAccount: ${task.exception}")
                     } else {

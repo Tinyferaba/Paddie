@@ -19,17 +19,12 @@ import com.fera.paddie.R
 import com.fera.paddie.controller.UserController
 import com.fera.paddie.model.TblUser
 import com.fera.paddie.model.util.CONST
-import com.fera.paddie.view.main.MainActivity
-import com.fera.paddie.view.uploadToCloud.UploadToCloudActivity
+import com.fera.paddie.view.main.home.MainActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.firestore.auth.User
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Date
 
 
 class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
@@ -112,8 +107,6 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
                     })
                 .show()
         }
-
-
 
 //        val userExists = userController.checkUser(username, password)
 

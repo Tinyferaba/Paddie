@@ -1,4 +1,4 @@
-package com.fera.paddie.view.main
+package com.fera.paddie.view.main.home
 
 import android.content.Context
 import android.view.LayoutInflater
