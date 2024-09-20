@@ -18,7 +18,7 @@ import androidx.navigation.fragment.findNavController
 import com.fera.paddie.R
 import com.fera.paddie.controller.UserController
 import com.fera.paddie.model.TblUser
-import com.fera.paddie.model.util.CONST
+import com.fera.paddie.util.CONST
 import com.fera.paddie.view.main.home.MainActivity
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth

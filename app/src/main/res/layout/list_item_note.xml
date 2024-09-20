@@ -12,49 +12,57 @@
     android:layout_height="wrap_content">
 
     <TextView
+        android:id="@+id/tvNoteTitleListItem"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="@string/hintTitle"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tvNoteDateListItem"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <TextView
         android:id="@+id/tvNoteDescListItem"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/hintDesc"
-        android:textSize="15sp"
+        android:textSize="12sp"
         android:textStyle="italic"
-        app:layout_constraintBottom_toBottomOf="@+id/textView6"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ivFavouriteNoteListItem"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        app:layout_constraintTop_toTopOf="@+id/textView6" />
-
-    <TextView
-        android:id="@+id/tvNoteTitleListItem"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:hint="@string/hintTitle"
-        android:textSize="17sp"
-        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/tvNoteTitleListItem" />
+
 
     <TextView
         android:id="@+id/tvNoteDateListItem"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
         android:hint="@string/hintDate"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/tvNoteTitleListItem"
-        app:layout_constraintTop_toBottomOf="@+id/tvNoteTitleListItem" />
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/tvNoteDescListItem"
+        app:layout_constraintEnd_toStartOf="@+id/ivFavouriteNoteListItem"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/ivDeleteNoteListItem"
+        android:id="@+id/ivFavouriteNoteListItem"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/chkbxSelectBox"
+        app:layout_constraintEnd_toStartOf="@+id/chkbxSelectBox_listItem"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_delete" />
+        app:srcCompat="@drawable/ic_unfavourite" />
+
 
     <CheckBox
-        android:id="@+id/chkbxSelectBox"
+        android:id="@+id/chkbxSelectBox_listItem"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:visibility="gone"
@@ -63,24 +71,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_delete" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:text="#"
-        app:layout_constraintBottom_toBottomOf="@+id/tvNoteDateListItem"
-        app:layout_constraintStart_toEndOf="@+id/tvNoteDateListItem"
-        app:layout_constraintTop_toTopOf="@+id/tvNoteDateListItem" />
-
-    <ImageView
-        android:id="@+id/ivFavouriteNoteListItem"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_marginEnd="15dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ivDeleteNoteListItem"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_unfavourite" />
 </androidx.constraintlayout.widget.ConstraintLayout>

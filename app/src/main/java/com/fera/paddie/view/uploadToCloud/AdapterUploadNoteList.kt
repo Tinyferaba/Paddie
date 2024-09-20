@@ -1,19 +1,19 @@
 package com.fera.paddie.view.uploadToCloud
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.model.TblNote
 
 
-class AdapterUploadNoteList(private val context: Context, private var noteList: List<TblNote>, private val parentActivity: UploadToCloudActivity): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
+class AdapterUploadNoteList(private val context: Context, private var noteList: List<TblNote>, private val parentAct: UploadToCloudActivity): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
         fun deleteNote(id: Int)
@@ -29,9 +29,9 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
         val tvTitle: TextView = i.findViewById(R.id.tvNoteTitleListItem)
         val tvDate: TextView = i.findViewById(R.id.tvNoteDateListItem)
         val tvDesc: TextView = i.findViewById(R.id.tvNoteDescListItem)
-        val ivDelete: ImageView = i.findViewById(R.id.ivDeleteNoteListItem)
+//        val ivDelete: ImageView = i.findViewById(R.id.ivDeleteNoteListItem)
         val ivFavourite: ImageView = i.findViewById(R.id.ivFavouriteNoteListItem)
-        val chkbxSelectBox: CheckBox = i.findViewById(R.id.chkbxSelectBox)
+        val chkbxSelectBox: CheckBox = i.findViewById(R.id.chkbxSelectBox_listItem)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -62,9 +62,9 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
             if (noteList[position].pkNoteId != null && !noteList[position].updated)
                 chkbxSelectBox.visibility = View.GONE
 
-            ivDelete.setOnClickListener {
-                parentActivity.deleteNote(noteList[position].pkNoteId!!)
-            }
+//            ivDelete.setOnClickListener {
+//                parentActivity.deleteNote(noteList[position].pkNoteId!!)
+//            }
 
             if(noteList[position].favourite){
                 ivFavourite.setImageResource(R.drawable.ic_favourite)
@@ -82,7 +82,7 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
                 }
 
                 noteList[position].favourite = fav
-                parentActivity.updateFavourite(noteList[position].pkNoteId!!, fav)
+                parentAct.updateFavourite(noteList[position].pkNoteId!!, fav)
             }
 
             if (allChecked){
@@ -96,15 +96,15 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
             chkbxSelectBox.setOnClickListener {
                 if (chkbxSelectBox.isChecked) {
                     chkbxSelectBox.isChecked = true
-                    parentActivity.addToUploadList(noteList[position])
+                    parentAct.addToUploadList(noteList[position])
                 } else {
                     chkbxSelectBox.isChecked = false
-                    parentActivity.removeFromUploadList(noteList[position])
+                    parentAct.removeFromUploadList(noteList[position])
                 }
             }
 
             itemView.setOnClickListener {
-                parentActivity.navigateToAddNoteFragment(noteList[position].pkNoteId!!)
+                parentAct.navigateToAddNoteFragment(noteList[position].pkNoteId!!)
             }
         }
 
@@ -113,9 +113,9 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
     fun checkAll(check: Boolean){
         allChecked = check
         if (check){
-            parentActivity.addToUploadList(noteList)
+            parentAct.addToUploadList(noteList)
         } else {
-            parentActivity.clearUploadList()
+            parentAct.clearUploadList()
         }
         notifyDataSetChanged()
     }

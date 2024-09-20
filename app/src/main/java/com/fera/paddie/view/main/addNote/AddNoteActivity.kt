@@ -16,7 +16,7 @@ import androidx.core.widget.addTextChangedListener
 import com.fera.paddie.R
 import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
-import com.fera.paddie.model.util.CONST
+import com.fera.paddie.util.CONST
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

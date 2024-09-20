@@ -25,7 +25,7 @@ import com.bumptech.glide.Glide
 import com.fera.paddie.R
 import com.fera.paddie.controller.UserController
 import com.fera.paddie.model.TblUser
-import com.fera.paddie.model.util.CONST
+import com.fera.paddie.util.CONST
 import com.fera.paddie.view.uploadToCloud.UploadToCloudActivity
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textfield.TextInputEditText

@@ -23,7 +23,7 @@ import com.fera.paddie.auth.LoginAndSignUp
 import com.fera.paddie.controller.NoteControllers
 //import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.model.TblNote
-import com.fera.paddie.model.util.CONST
+import com.fera.paddie.util.CONST
 import com.fera.paddie.view.main.addNote.AddNoteActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -123,7 +123,7 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         mAuth = FirebaseAuth.getInstance()
         mDBRef = FirebaseDatabase.getInstance().getReference()
 
-        chkbxSelectAll = findViewById(R.id.chkbxSelectAll)
+        chkbxSelectAll = findViewById(R.id.chkbxSelectAll_uploadToCloud)
         ivUploadToCloud = findViewById(R.id.ivUploadToCloud)
         pbUploadStatus = findViewById(R.id.pbUploadStatus)
 
