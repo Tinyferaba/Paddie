@@ -106,8 +106,6 @@ class AdapterNoteList(private val context: Context, var noteList: List<TblNote>,
 
             //todo: Complete this functionality
             itemView.setOnLongClickListener {
-                val color = ContextCompat.getColor(itemView.context, R.color.light_green)
-
                 parentAct.changeMode(MODE.DELETE)
                 showCheckBox = true
                 notifyDataSetChanged()

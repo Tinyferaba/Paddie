@@ -25,7 +25,7 @@ class Initializer {
                 //######### Put RUN ONCE codes Here #########//
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    loadDemoData(mainActivity)
+//                    loadDemoData(mainActivity)
                 }
 
                 markAsRan(mainActivity.application)
@@ -45,10 +45,10 @@ class Initializer {
         }
 
         private suspend fun loadDemoData(mainActivity: MainActivity) {
-            val photo1 = ContextCompat.getDrawable(mainActivity.baseContext, R.drawable.image_1)
-            val photo2 = ContextCompat.getDrawable(mainActivity.baseContext, R.drawable.image_2)
-            val photo3 = ContextCompat.getDrawable(mainActivity.baseContext, R.drawable.image_3)
-            val photo4 = ContextCompat.getDrawable(mainActivity.baseContext, R.drawable.image_4)
+            val photo1 = ContextCompat.getDrawable(mainActivity.baseContext, R.drawable.killmonger)
+            val photo2 = ContextCompat.getDrawable(mainActivity.baseContext, R.drawable.antman)
+            val photo3 = ContextCompat.getDrawable(mainActivity.baseContext, R.drawable.storm)
+            val photo4 = ContextCompat.getDrawable(mainActivity.baseContext, R.drawable.wonder_women)
 
             val devList = listOf(
                 TblDevelopers("22302067", "Noody", "HAGAYO", "22302067noha@student.pnguot.ac.pg", getBitmap(photo1!!)),

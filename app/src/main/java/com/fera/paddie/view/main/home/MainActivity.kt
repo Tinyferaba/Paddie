@@ -50,6 +50,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -106,7 +107,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
         loadUserData()
 
-        Initializer.initApp(this)
+//        Initializer.initApp(this)
 
 //        lifecycleScope.launch {
 //            loadDemoData()
@@ -126,6 +127,14 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
                 R.id.menuUploadToCloud -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, UploadToCloudActivity::class.java)
+                    intent.putExtra("uploadToCloud", true)
+                    startActivity(intent)
+                    true
+                }
+                R.id.menuDownloadFromCloud -> {
+                    drawerLayout.closeDrawer(GravityCompat.START)
+                    val intent = Intent(this, UploadToCloudActivity::class.java)
+                    intent.putExtra("uploadToCloud", false)
                     startActivity(intent)
                     true
                 }
@@ -137,6 +146,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
                 logoutUser()
             } else {
                 val intent = Intent(this, LoginAndSignUp::class.java)
+                CONST.uploadNotes = false
                 startActivity(intent)
             }
 
@@ -222,6 +232,10 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         rvNoteList.adapter = adapterNoteList
 
         noteControllers.allNotes.observe(this) {noteList ->
+            if (noteList.isEmpty()){
+                llCheckBox.visibility = View.GONE
+                chkbxSelectAll.isChecked = false
+            }
             adapterNoteList.updateNoteList(noteList)
         }
 
@@ -303,63 +317,48 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     }
 
     private fun loadUserData() {
-        val uid = FirebaseAuth.getInstance().uid
-        if (uid != null){
-            tvLogin.text = "Logout"
-            loggedIn = true
+        val accountCreated = intent.getBooleanExtra("accountCreated", false)
+        if (accountCreated){
+            var uid = FirebaseAuth.getInstance().uid
+            CoroutineScope(Dispatchers.IO).launch {
+                do {
+                    if (uid != null){
+                        tvLogin.text = "Logout"
+                        loggedIn = true
 
-            mDBRef.child(CONST.fDB_DIR_USER).child(uid)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful){
-                        val user = task.result.getValue(TblUser::class.java)
+                        mDBRef.child(CONST.fDB_DIR_USER).child(uid!!)
+                            .get()
+                            .addOnCompleteListener { task ->
+                                if (task.isSuccessful){
+                                    val user = task.result.getValue(TblUser::class.java)
 
-                        if (user != null){
-                            val name = "${user.firstName} ${user.lastName}"
-                            val email = user.email
+                                    if (user != null){
+                                        val name = "${user.firstName} ${user.lastName}"
+                                        val email = user.email
 
-                            tvMail.text = email
-                            tvName.text = name
-                            user.photo?.let { photoURI ->
-                                Glide.with(this)
-                                    .load(photoURI)
-                                    .placeholder(R.drawable.kamake)
-                                    .centerCrop()
-                                    .into(sIvProfilePhoto)
+                                        tvMail.text = email
+                                        tvName.text = name
+                                        user.photo?.let { photoURI ->
+                                            Glide.with(this@MainActivity)
+                                                .load(photoURI)
+                                                .placeholder(R.drawable.kamake)
+                                                .centerCrop()
+                                                .into(sIvProfilePhoto)
+                                        }
+                                        Log.d(TAG, "loadUserData: ${user.photo}")
+                                    }
+                                } else {
+                                    Toast.makeText(this@MainActivity, "Error loading User data: ${task.exception}: ", Toast.LENGTH_SHORT).show()
+                                }
                             }
-                            Log.d(TAG, "loadUserData: ${user.photo}")
-                        }
-                    } else {
-                        Toast.makeText(this, "Error loading User data: ${task.exception}: ", Toast.LENGTH_SHORT).show()
                     }
-                }
-        }
-    }
-
-    private suspend fun loadDemoData() {
-        val photo1 = ContextCompat.getDrawable(this, R.drawable.image_1)
-        val photo2 = ContextCompat.getDrawable(this, R.drawable.image_2)
-        val photo3 = ContextCompat.getDrawable(this, R.drawable.image_3)
-        val photo4 = ContextCompat.getDrawable(this, R.drawable.image_4)
-
-        val devList = listOf(
-            TblDevelopers("22302067", "Noody", "HAGAYO", "22302067noha@student.pnguot.ac.pg", getBitmap(photo1!!)),
-            TblDevelopers("22302074", "Boi", "KOBLA", "22302074boko@student.pnguot.ac.pg", getBitmap(photo2!!)),
-            TblDevelopers("22301822", "Shima Delilah", "DENSON", "22301822shde@student.pnguot.ac.pg", getBitmap(photo3!!)),
-            TblDevelopers("22301788", "Renee", "ATTMANKIA", "22301788reat@student.pnguot.ac.pg", getBitmap(photo4!!))
-        )
-
-        val uploadScope = CoroutineScope(Dispatchers.IO)
-        val devControllers = ViewModelProvider(this)[DeveloperController::class.java]
-
-        val uploadJob = devList.map { tblDevelopers ->
-            uploadScope.launch {
-                devControllers.insertDeveloper(tblDevelopers)
+                    delay(100)
+                    uid = FirebaseAuth.getInstance().uid
+                } while (uid == null)
             }
         }
-        uploadJob.forEach { job -> job.join()}
-
     }
+
 
     private fun getBitmap(drawable: Drawable): Bitmap {
         return (drawable as BitmapDrawable).bitmap

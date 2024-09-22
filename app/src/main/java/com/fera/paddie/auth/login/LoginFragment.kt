@@ -15,6 +15,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.fera.paddie.R
 import com.fera.paddie.controller.UserController
 import com.fera.paddie.model.TblUser
@@ -24,6 +26,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
@@ -31,12 +35,15 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
     private val TAG = "Test Credentials"
     private lateinit var v: View
 
-    private lateinit var tiEdtUsername: TextInputEditText
+    private lateinit var tiEdtEmail: TextInputEditText
     private lateinit var tiEdtPassword: TextInputEditText
     private lateinit var btnLogin: Button
     private lateinit var tvSignUp: TextView
 
     private lateinit var userController: UserController
+
+    private lateinit var rvUsers: RecyclerView
+    private lateinit var adapterUsers: AdapterLogin
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var mDBRef: DatabaseReference
@@ -69,6 +76,28 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
         }
     }
 
+    private fun clearInputFields() {
+        tiEdtEmail.setText("")
+    }
+
+    private fun initViews() {
+        mDBRef = FirebaseDatabase.getInstance().getReference()
+        mAuth = FirebaseAuth.getInstance()
+        userController = ViewModelProvider(this)[UserController::class.java]
+
+        tiEdtEmail = v.findViewById(R.id.tiEdtEmail_login)
+        tiEdtPassword = v.findViewById(R.id.tiEdtPassword_login)
+        btnLogin = v.findViewById(R.id.btnLogin_login)
+        tvSignUp = v.findViewById(R.id.tvSignUp_login)
+
+        rvUsers = v.findViewById(R.id.rvUsers_login)
+        rvUsers.layoutManager = LinearLayoutManager(requireContext())
+        userController.getAllUsers().observe(viewLifecycleOwner){users ->
+            adapterUsers = AdapterLogin(users, requireContext(), this)
+            rvUsers.adapter = adapterUsers
+        }
+    }
+
     private fun login(uid: String) {
         val editor = requireContext().getSharedPreferences(CONST.SHARED_PREF_db, Context.MODE_PRIVATE).edit()
         editor.putString(CONST.SHARED_PREF_USER_ID, uid)
@@ -81,7 +110,7 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
     }
 
     private fun loginUser() {
-        val username = tiEdtUsername.text.toString().trim()
+        val username = tiEdtEmail.text.toString().trim()
         val password = tiEdtPassword.text.toString().trim()
 
         if (username.isNotEmpty()) {
@@ -90,7 +119,7 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
                     login(task.user!!.uid)
                 }
                 .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Incorrect Username or Password!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Incorrect Email or Password!", Toast.LENGTH_SHORT).show()
                 }
         } else {
             val alert = AlertDialog.Builder(requireContext())
@@ -134,31 +163,9 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
         clearInputFields()
     }
 
-    private fun clearInputFields() {
-        tiEdtPassword.setText("")
-        tiEdtUsername.setText("")
-    }
-
-    private fun initViews() {
-        mDBRef = FirebaseDatabase.getInstance().getReference()
-        mAuth = FirebaseAuth.getInstance()
-        userController = ViewModelProvider(this)[UserController::class.java]
-
-        tiEdtUsername = v.findViewById(R.id.tiEdtUsername_login)
-        tiEdtPassword = v.findViewById(R.id.tiEdtPassword_login)
-        btnLogin = v.findViewById(R.id.btnLogin_login)
-        tvSignUp = v.findViewById(R.id.tvSignUp_login)
-    }
-
     override fun useUser(tblUser: TblUser) {
-        mAuth.signInWithEmailAndPassword(tblUser.email!!, tblUser.password!!)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful){
-
-                } else {
-
-                }
-            }
+        tiEdtEmail.setText(tblUser.email)
+        tiEdtPassword.setText(tblUser.password)
     }
 
     override fun removeUser(tblUser: TblUser): Boolean {
@@ -167,6 +174,9 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful){
                     isSuccess = true
+                    CoroutineScope(Dispatchers.IO).launch {
+                        userController.deleteUser(tblUser.pkUserId)
+                    }
                 } else {
                     isSuccess = false
                 }

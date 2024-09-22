@@ -190,6 +190,7 @@ class SignUpFragment : Fragment() {
         editor.apply()
 
         val intent = Intent(requireContext(), UploadToCloudActivity::class.java)
+        intent.putExtra("accountCreated", true)
         requireActivity().finish()
         startActivity(intent)
     }

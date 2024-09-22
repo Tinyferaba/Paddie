@@ -14,5 +14,7 @@ class CONST {
 
         const val PERMISSION_CODE_STORAGE = 1001
         const val IMAGE_PICK_CODE = 1000
+
+        var uploadNotes = false
     }
 }

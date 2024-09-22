@@ -13,7 +13,7 @@ import com.fera.paddie.R
 import com.fera.paddie.model.TblNote
 
 
-class AdapterUploadNoteList(private val context: Context, private var noteList: List<TblNote>, private val parentAct: UploadToCloudActivity): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
+class AdapterUploadNoteList(private val context: Context, var noteList: List<TblNote>, val parentAct: UploadToCloudActivity, private val alreadyUpAndDownloaded: Boolean): RecyclerView.Adapter<AdapterUploadNoteList.MyViewHolder>() {
     interface NoteActivities {
         fun updateNote(tblNote: TblNote)
         fun deleteNote(id: Int)
@@ -92,6 +92,8 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
             }
 
             chkbxSelectBox.visibility = View.VISIBLE
+            if (alreadyUpAndDownloaded)
+                chkbxSelectBox.visibility = View.GONE
 
             chkbxSelectBox.setOnClickListener {
                 if (chkbxSelectBox.isChecked) {
@@ -106,6 +108,9 @@ class AdapterUploadNoteList(private val context: Context, private var noteList: 
             itemView.setOnClickListener {
                 parentAct.navigateToAddNoteFragment(noteList[position].pkNoteId!!)
             }
+
+//            val widthInPx = (300 * context.resources.displayMetrics.density + 0.5f).toInt()
+//            itemView.layoutParams.width = widthInPx
         }
 
     }

@@ -7,7 +7,7 @@
     tools:context=".auth.signup.SignUpFragment">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/titleDescription"
         android:layout_width="match_parent"
         android:layout_height="75dp"
         android:background="@drawable/bg_cl_top_views"
@@ -20,7 +20,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textView"
+        android:layout_below="@id/titleDescription"
         android:scrollbars="none">
 
         <LinearLayout
