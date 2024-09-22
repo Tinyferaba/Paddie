@@ -182,12 +182,11 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    private fun login(uid: String) {
-        val editor =
-            requireContext().getSharedPreferences(CONST.SHARED_PREF_db, Context.MODE_PRIVATE).edit()
-        editor.putString(CONST.SHARED_PREF_USER_ID, uid)
-        editor.putBoolean(CONST.SHARED_PREF_IS_USER_SIGNED_IN, true)
-        editor.apply()
+    private fun login() {
+//        val editor = requireContext().getSharedPreferences(CONST.SHARED_PREF_db, Context.MODE_PRIVATE).edit()
+//        editor.putString(CONST.SHARED_PREF_USER_ID, uid)
+//        editor.putBoolean(CONST.SHARED_PREF_IS_USER_SIGNED_IN, true)
+//        editor.apply()
 
         val intent = Intent(requireContext(), UploadToCloudActivity::class.java)
         intent.putExtra("accountCreated", true)
@@ -258,7 +257,7 @@ class SignUpFragment : Fragment() {
                             password,
                             gender
                         )
-                        login(task.result.user!!.uid)
+                        login()
                         Log.d(TAG, "createAccount: ${task.exception}")
                     } else {
                         Log.d(TAG, "createAccount: ${task.exception}")

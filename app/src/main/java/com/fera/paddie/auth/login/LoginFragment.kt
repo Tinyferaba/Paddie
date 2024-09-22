@@ -1,9 +1,9 @@
 package com.fera.paddie.auth.login
 
-import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -29,6 +29,7 @@ import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
@@ -92,21 +93,50 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
 
         rvUsers = v.findViewById(R.id.rvUsers_login)
         rvUsers.layoutManager = LinearLayoutManager(requireContext())
-        userController.getAllUsers().observe(viewLifecycleOwner){users ->
+        userController.getAllUsers().observe(viewLifecycleOwner) { users ->
             adapterUsers = AdapterLogin(users, requireContext(), this)
             rvUsers.adapter = adapterUsers
         }
     }
 
-    private fun login(uid: String) {
-        val editor = requireContext().getSharedPreferences(CONST.SHARED_PREF_db, Context.MODE_PRIVATE).edit()
-        editor.putString(CONST.SHARED_PREF_USER_ID, uid)
-        editor.putBoolean(CONST.SHARED_PREF_IS_USER_SIGNED_IN, true)
-        editor.apply()
+    private fun login() {
+//        val editor = requireContext().getSharedPreferences(CONST.SHARED_PREF_db, Context.MODE_PRIVATE).edit()
+//        editor.putString(CONST.SHARED_PREF_USER_ID, uid)
+//        editor.putBoolean(CONST.SHARED_PREF_IS_USER_SIGNED_IN, true)
+//        editor.apply()
 
-        val intent = Intent(requireContext(), MainActivity::class.java)
-        requireActivity().finish()
-        startActivity(intent)
+
+//        CoroutineScope(Dispatchers.IO).launch {
+        mDBRef.child(CONST.fDB_DIR_USER).child(mAuth.uid!!)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    if (task.result.exists()) {
+                        val tblUser = task.result.getValue(TblUser::class.java)
+
+                        CoroutineScope(Dispatchers.IO).launch {
+                            val userExits = userController.checkUserByUid(tblUser!!.uid!!)
+
+                            if (userExits == 0)
+                                userController.insertUser(tblUser)
+
+                            withContext(Dispatchers.Main) {
+                                val intent = Intent(requireContext(), MainActivity::class.java)
+                                requireActivity().finish()
+                                startActivity(intent)
+                            }
+                        }
+
+
+                        Log.d(TAG, "login: $tblUser")
+                    }
+                } else {
+                    Toast.makeText(requireContext(), "Error loading user data", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+//        }
+
     }
 
     private fun loginUser() {
@@ -116,10 +146,14 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
         if (username.isNotEmpty()) {
             mAuth.signInWithEmailAndPassword(username, password)
                 .addOnSuccessListener { task ->
-                    login(task.user!!.uid)
+                    login()
                 }
                 .addOnFailureListener {
-                    Toast.makeText(requireContext(), "Incorrect Email or Password!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        requireContext(),
+                        "Incorrect Email or Password!",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         } else {
             val alert = AlertDialog.Builder(requireContext())
@@ -170,17 +204,22 @@ class LoginFragment : Fragment(), AdapterLogin.AdapterLoginAction {
 
     override fun removeUser(tblUser: TblUser): Boolean {
         var isSuccess = false
-        mDBRef.child(CONST.fDB_DIR_USER).child(tblUser.uid!!).removeValue()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful){
-                    isSuccess = true
-                    CoroutineScope(Dispatchers.IO).launch {
-                        userController.deleteUser(tblUser.pkUserId)
-                    }
-                } else {
-                    isSuccess = false
-                }
-            }
+
+        lifecycleScope.launch {
+            userController.deleteUser(tblUser.pkUserId)
+        }
+
+//        mDBRef.child(CONST.fDB_DIR_USER).child(tblUser.uid!!).removeValue()
+//            .addOnCompleteListener { task ->
+//                if (task.isSuccessful){
+//                    isSuccess = true
+//                    CoroutineScope(Dispatchers.IO).launch {
+//                        userController.deleteUser(tblUser.pkUserId)
+//                    }
+//                } else {
+//                    isSuccess = false
+//                }
+//            }
         return isSuccess
     }
 }

@@ -24,6 +24,9 @@ class UserController(application: Application): AndroidViewModel(application) {
     suspend fun getUser(id: Int): TblUser {
         return userDao.getUser(id)
     }
+    suspend fun checkUserByUid(uid: String): Int {
+        return userDao.checkUserByUid(uid)
+    }
 
     fun getAllUsers(): LiveData<List<TblUser>> {
         return userDao.getAllUsers()

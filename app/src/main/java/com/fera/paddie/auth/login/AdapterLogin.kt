@@ -29,9 +29,7 @@ class AdapterLogin(private val users: List<TblUser>, private val context: Contex
             tvUsername.text = firstname.plus(" $lastname")
 
             ivDelete.setOnClickListener {
-                val userRemoved = parentFragment.removeUser(users[position])
-                if (userRemoved)
-                    notifyItemChanged(position)
+                parentFragment.removeUser(users[position])
             }
 
             itemView.setOnClickListener {

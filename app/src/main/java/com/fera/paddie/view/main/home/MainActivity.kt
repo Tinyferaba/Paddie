@@ -35,6 +35,7 @@ import com.fera.paddie.R
 import com.fera.paddie.auth.LoginAndSignUp
 import com.fera.paddie.controller.DeveloperController
 import com.fera.paddie.controller.NoteControllers
+import com.fera.paddie.controller.UserController
 import com.fera.paddie.model.TblDevelopers
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.model.TblUser
@@ -87,6 +88,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private var noteListDelete = mutableListOf<TblNote>()
 
     //######### CONTROLLERS PROPERTY #########//
+    private lateinit var userController: UserController
     private lateinit var noteControllers: NoteControllers
     private lateinit var mDBRef: DatabaseReference
 
@@ -152,12 +154,15 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
         }
         ivAddNote.setOnClickListener {
-            if (mode == MODE.ADD){
-                val intent = Intent(this, AddNoteActivity::class.java)
-                startActivity(intent)
-            } else if (mode == MODE.DELETE){
-                deleteSelectedNotes()
+            userController.getAllUsers().observe(this){users ->
+                Log.d(TAG, "addActionListeners: $users")
             }
+//            if (mode == MODE.ADD){
+//                val intent = Intent(this, AddNoteActivity::class.java)
+//                startActivity(intent)
+//            } else if (mode == MODE.DELETE){
+//                deleteSelectedNotes()
+//            }
         }
         ivShowSideDrawer.setOnClickListener {
             showHideSideDrawer()
@@ -223,10 +228,11 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         tvMail = sideNavigation.getHeaderView(0).findViewById(R.id.tvMail_sideDrawer)
 
         //######### CONTROLLERS #########//
-        noteControllers = NoteControllers(application)
+        userController = ViewModelProvider(this)[UserController::class.java]
+        noteControllers = ViewModelProvider(this)[NoteControllers::class.java]
 
         //######### RECYCLER VIEWS #########//
-        rvNoteList =findViewById(R.id.rvNoteList_home)
+        rvNoteList = findViewById(R.id.rvNoteList_home)
         rvNoteList.layoutManager = LinearLayoutManager(this)
         adapterNoteList = AdapterNoteList(this, noteList, this)
         rvNoteList.adapter = adapterNoteList
@@ -238,10 +244,8 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
             }
             adapterNoteList.updateNoteList(noteList)
         }
-
         setupSwipeToDelete(rvNoteList, adapterNoteList)
     }
-
 
     override fun navigateToAddNoteFragment(id: Int) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -317,46 +321,44 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     }
 
     private fun loadUserData() {
-        val accountCreated = intent.getBooleanExtra("accountCreated", false)
-        if (accountCreated){
-            var uid = FirebaseAuth.getInstance().uid
-            CoroutineScope(Dispatchers.IO).launch {
-                do {
-                    if (uid != null){
-                        tvLogin.text = "Logout"
-                        loggedIn = true
+//        val accountCreated = intent.getBooleanExtra("accountCreated", false)
+//        if (accountCreated){
+            FirebaseAuth.getInstance().uid.let {uid ->
+                if (uid != null){
+                    tvLogin.text = "Logout"
+                    loggedIn = true
 
-                        mDBRef.child(CONST.fDB_DIR_USER).child(uid!!)
-                            .get()
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful){
-                                    val user = task.result.getValue(TblUser::class.java)
+                    mDBRef.child(CONST.fDB_DIR_USER).child(uid!!)
+                        .get()
+                        .addOnCompleteListener { task ->
+                            if (task.isSuccessful){
+                                val user = task.result.getValue(TblUser::class.java)
 
-                                    if (user != null){
-                                        val name = "${user.firstName} ${user.lastName}"
-                                        val email = user.email
+                                if (user != null){
+                                    val name = "${user.firstName} ${user.lastName}"
+                                    val email = user.email
 
-                                        tvMail.text = email
-                                        tvName.text = name
-                                        user.photo?.let { photoURI ->
-                                            Glide.with(this@MainActivity)
-                                                .load(photoURI)
-                                                .placeholder(R.drawable.kamake)
-                                                .centerCrop()
-                                                .into(sIvProfilePhoto)
-                                        }
-                                        Log.d(TAG, "loadUserData: ${user.photo}")
+                                    tvMail.text = email
+                                    tvName.text = name
+                                    user.photo?.let { photoURI ->
+                                        Glide.with(this@MainActivity)
+                                            .load(photoURI)
+                                            .placeholder(R.drawable.kamake)
+                                            .centerCrop()
+                                            .into(sIvProfilePhoto)
                                     }
-                                } else {
-                                    Toast.makeText(this@MainActivity, "Error loading User data: ${task.exception}: ", Toast.LENGTH_SHORT).show()
+                                    Log.d(TAG, "loadUserData: ${user.photo}")
+                                    Toast.makeText(this, "User loaded...", Toast.LENGTH_SHORT).show()
                                 }
+                            } else {
+                                Toast.makeText(this@MainActivity, "Error loading User data: ${task.exception}: ", Toast.LENGTH_SHORT).show()
                             }
-                    }
-                    delay(100)
-                    uid = FirebaseAuth.getInstance().uid
-                } while (uid == null)
+                        }
+                } else {
+
+                }
             }
-        }
+//        }
     }
 
 

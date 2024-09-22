@@ -17,6 +17,9 @@ interface UserDao {
     @Query("""select * from tbl_user where pkUserId = :id""")
     suspend fun getUser(id: Int): TblUser
 
+    @Query("""select count(*) from tbl_user where uid = :uid""")
+    suspend fun checkUserByUid(uid: String): Int
+
     @Query("""select * from tbl_user where pkUserId = :id""")
     suspend fun getUserById(id: Int): TblUser
 
