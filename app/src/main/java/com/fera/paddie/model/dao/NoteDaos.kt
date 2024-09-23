@@ -41,5 +41,8 @@ interface NoteDao {
 
     @Query("select * from tbl_note where pkNoteId = :id")
     fun getNote(id: Int): TblNote
+
+    @Query("select * from tbl_note order by title asc")
+    fun searchByTitleAsc(title: String): List<TblNote>
 }
 

@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
@@ -33,14 +34,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.fera.paddie.R
 import com.fera.paddie.auth.LoginAndSignUp
-import com.fera.paddie.controller.DeveloperController
 import com.fera.paddie.controller.NoteControllers
 import com.fera.paddie.controller.UserController
-import com.fera.paddie.model.TblDevelopers
 import com.fera.paddie.model.TblNote
 import com.fera.paddie.model.TblUser
 import com.fera.paddie.util.CONST
-import com.fera.paddie.view.Initializer
+import com.fera.paddie.util.SortType
 import com.fera.paddie.view.aboutUs.AboutUsActivity
 import com.fera.paddie.view.main.addNote.AddNoteActivity
 import com.fera.paddie.view.uploadToCloud.UploadToCloudActivity
@@ -51,7 +50,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -72,6 +70,11 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private lateinit var ivAddNote: ImageView //Buttons
     private lateinit var edtSearchField: EditText
     private lateinit var ivShowSideDrawer: ImageView
+
+    private lateinit var ivShowHideSortOption: View
+    private lateinit var include_sortOptions: View
+    private lateinit var ivSortByTitle: ImageView
+    private lateinit var ivSortByDesc: ImageView
 
     private lateinit var llCheckBox: LinearLayout
     private lateinit var chkbxSelectAll: CheckBox
@@ -153,16 +156,22 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
             }
 
         }
+        ivShowHideSortOption.setOnClickListener {
+            showHideSortOptions(include_sortOptions.isVisible)
+        }
+        ivSortByTitle.setOnClickListener {
+            sortNotes(SortType.SORT_BY_TITLE)
+        }
+        ivSortByDesc.setOnClickListener {
+
+        }
         ivAddNote.setOnClickListener {
-            userController.getAllUsers().observe(this){users ->
-                Log.d(TAG, "addActionListeners: $users")
+            if (mode == MODE.ADD) {
+                val intent = Intent(this, AddNoteActivity::class.java)
+                startActivity(intent)
+            } else if (mode == MODE.DELETE) {
+                deleteSelectedNotes()
             }
-//            if (mode == MODE.ADD){
-//                val intent = Intent(this, AddNoteActivity::class.java)
-//                startActivity(intent)
-//            } else if (mode == MODE.DELETE){
-//                deleteSelectedNotes()
-//            }
         }
         ivShowSideDrawer.setOnClickListener {
             showHideSideDrawer()
@@ -185,6 +194,25 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         ivClearSearchField.setOnClickListener { clearSearchField() }
         ivSearch.setOnClickListener { searchNotes() }
         edtSearchField.addTextChangedListener { searchNotes() }
+    }
+
+    private fun sortNotes(sortType: SortType) {
+        when(sortType){
+            SortType.SORT_BY_TITLE -> {
+                noteControllers
+            }
+            SortType.SORT_BY_DESC -> {}
+        }
+    }
+
+    private fun showHideSortOptions(hide: Boolean) {
+        if (hide){
+            include_sortOptions.visibility = View.GONE
+            ivShowHideSortOption.foregroundTintList = ColorStateList.valueOf(resources.getColor(R.color.black))
+        } else {
+            include_sortOptions.visibility = View.VISIBLE
+            ivShowHideSortOption.foregroundTintList = ColorStateList.valueOf(resources.getColor(R.color.white))
+        }
     }
 
     private fun deleteSelectedNotes() {
@@ -218,6 +246,11 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         ivAddNote = findViewById(R.id.ivAddNote)
         edtSearchField =findViewById(R.id.edtSearchField)
         ivShowSideDrawer = findViewById(R.id.ivShowSideDrawer)
+
+        ivShowHideSortOption = findViewById(R.id.ivShowHideSortOption)
+        include_sortOptions = findViewById(R.id.include_sortOption_main)
+        ivSortByTitle = findViewById(R.id.ivSortByTitle)
+        ivSortByDesc = findViewById(R.id.ivSortByDesc)
 
         llCheckBox = findViewById(R.id.lLCheckBox)
         chkbxSelectAll = findViewById(R.id.chkbxSelectAll_main)
