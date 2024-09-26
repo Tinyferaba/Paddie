@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
     android:orientation="vertical"
-    tools:context="com.fera.paddie.auth.login.LoginFragment"
+    tools:context="com.fera.paddie.feat_auth.login.LoginFragment"
     tools:ignore="ExtraText">
 
 

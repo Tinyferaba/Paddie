@@ -6,15 +6,25 @@ class CONST {
         const val fDB_DIR_IMG = "image"
         const val fDB_DIR_IMG_PROF = "profile"
 
+        const val SHARED_PREF_FONT = "sharedPref_font"
         const val SHARED_PREF_IS_USER_SIGNED_IN = "isSignedIn"
         const val SHARED_PREF_db = "sharedPref_db"
         const val SHARED_PREF_USER_ID = "uid"
         const val KEY_TBL_NOTE = "notes"
+
+        const val SHARED_PREF_DB = "sharedPref_db"
         const val IS_FIRST_RUN = "isFirstRun"
+
+        //######### FONT PROPERTIES #########//
+        const val FONT_SIZE = "fontSize"
+        const val IS_BOLD = "isBold"
+        const val IS_ITALIC = "isItalic"
 
         const val PERMISSION_CODE_STORAGE = 1001
         const val IMAGE_PICK_CODE = 1000
 
         var uploadNotes = false
+
+
     }
 }

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:background="@drawable/bg_outer_option"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
+        android:background="@drawable/bg_inner_option"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="4dp"
+            android:textColor="@color/black"
+            android:text="@string/Aa"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivIncreaseFontSize_addNote"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="2dp"
+            app:layout_constraintEnd_toEndOf="@+id/textView12"
+            app:layout_constraintStart_toStartOf="@+id/textView12"
+            app:layout_constraintTop_toBottomOf="@+id/textView12"
+            app:tint="@color/black"
+            app:srcCompat="@drawable/ic_plus" />
+
+        <ImageView
+            android:id="@+id/ivDecreaseFontSize_addNote"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginBottom="2dp"
+            app:tint="@color/black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/ivIncreaseFontSize_addNote"
+            app:layout_constraintStart_toStartOf="@+id/ivIncreaseFontSize_addNote"
+            app:layout_constraintTop_toBottomOf="@+id/ivIncreaseFontSize_addNote"
+            app:srcCompat="@drawable/ic_minus" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--  TODO: Pick the font color of lyrics. Add This functionality  -->
+<!--    <ImageView-->
+<!--        android:id="@+id/ivPickFontColor"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:contentDescription="@string/cdPickColor"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"-->
+<!--        app:srcCompat="@drawable/ic_color_circle" />-->
+
+<!--    <ImageView-->
+<!--        android:id="@+id/ivFontFamily"-->
+<!--        android:layout_width="30dp"-->
+<!--        android:layout_height="40dp"-->
+<!--        android:layout_marginTop="5dp"-->
+<!--        android:gravity="center"-->
+<!--        android:src="@drawable/ic_font_fam"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3" />-->
+    <ImageView
+        android:id="@+id/ivBoldText"
+        android:layout_width="25dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="3dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3"
+        android:src="@drawable/ic_bold" />
+
+    <ImageView
+        android:id="@+id/ivItalicizedText"
+        android:layout_width="35dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="3dp"
+        app:tint="@color/black"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/ivRestoreFontProperties"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivBoldText"
+        app:srcCompat="@drawable/ic_italic" />
+
+    <ImageView
+        android:id="@+id/ivRestoreFontProperties"
+        android:layout_width="30dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="4dp"
+        app:tint="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivItalicizedText"
+        app:srcCompat="@drawable/ic_erase" />
+</androidx.constraintlayout.widget.ConstraintLayout>

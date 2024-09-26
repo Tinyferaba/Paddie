@@ -58,6 +58,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/chkbxSelectBox_listItem"
         app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/black"
         app:srcCompat="@drawable/ic_unfavourite" />
 
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_main"
-    tools:context=".view.main.home.MainActivity">
+    tools:context=".main.MainActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -125,16 +125,13 @@
 
         <ImageView
             android:layout_width="30dp"
-
             android:layout_height="30dp"
-            app:tint="@color/white"
             android:elevation="12dp"
             android:id="@+id/ivShowHideSortOption"
             android:layout_marginStart="25dp"
             android:src="@drawable/ic_up_arrow"
             app:layout_constraintTop_toBottomOf="@+id/clMainSearchViews"
             app:layout_constraintStart_toStartOf="parent" />
-
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -164,12 +161,12 @@
             android:id="@+id/rvNoteList_home"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="16dp"
             android:background="@color/transparent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lLCheckBox"
+            app:layout_constraintTop_toBottomOf="@+id/ivShowHideSortOption"
             tools:listitem="@layout/list_item_note" />
 
         <ImageView

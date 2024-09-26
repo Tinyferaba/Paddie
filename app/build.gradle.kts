@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
-    id("kotlin-kapt")
+    id("com.google.devtools.ksp") version "1.9.10-1.0.13"
     alias(libs.plugins.google.gms.google.services)
 }
 
@@ -57,7 +57,7 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
     // To use Kotlin Symbol Processing (KSP)
-    kapt("androidx.room:room-compiler:$room_version")
+    ksp("androidx.room:room-compiler:$room_version")
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
 
@@ -73,14 +73,4 @@ dependencies {
 
     //Glide
     implementation("com.github.bumptech.glide:glide:4.16.0")
-
-
-//    val lifecycle_version = "2.8.1"
-//    // ViewModel
-//    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-//    // LiveData
-//    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-//    // Lifecycles only (without ViewModel or LiveData)
-//    implementation("androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version")
-
 }

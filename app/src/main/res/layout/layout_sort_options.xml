@@ -8,7 +8,7 @@
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        android:id="@+id/clSortOptionsWhole"
+        android:id="@+id/rLSortOptionsWhole"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/transparent"
@@ -34,30 +34,29 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:id="@+id/ivSortByTitle"
+                android:id="@+id/ivSortBy"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginEnd="16dp"
                 android:background="@drawable/bg_sort_item_active"
                 android:elevation="9dp"
-                app:tint="@color/white"
-                android:src="@drawable/ic_sort_alph_asc"
-                app:layout_constraintBottom_toBottomOf="@+id/ivSortByDesc"
-                app:layout_constraintEnd_toStartOf="@+id/ivSortByDesc"
-                app:layout_constraintTop_toTopOf="@+id/ivSortByDesc"
+                android:src="@drawable/ic_sort_title_desc"
+                app:layout_constraintBottom_toBottomOf="@+id/ivFavourites"
+                app:layout_constraintEnd_toStartOf="@+id/ivFavourites"
+                app:layout_constraintTop_toTopOf="@+id/ivFavourites"
                 app:layout_constraintVertical_bias="0.0" />
 
             <ImageView
-                android:id="@+id/ivSortByDesc"
+                android:id="@+id/ivFavourites"
                 android:layout_width="35dp"
                 android:layout_height="35dp"
                 android:layout_marginTop="4dp"
                 android:background="@drawable/bg_sort_item_active"
                 android:elevation="9dp"
                 app:tint="@color/white"
+                android:src="@drawable/ic_unfavourite"
                 android:layout_marginBottom="10dp"
                 android:layout_marginEnd="10dp"
-                android:src="@drawable/ic_sort_alph_desc"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"

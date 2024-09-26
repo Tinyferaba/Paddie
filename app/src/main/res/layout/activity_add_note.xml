@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:background="@drawable/bg_main"
     android:layout_height="match_parent"
-    tools:context=".view.main.addNote.AddNoteActivity">
+    android:background="@drawable/bg_main"
+    tools:context=".feat_addNote.AddNoteActivity">
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/topViews"
+        android:id="@+id/clTopViews"
         android:layout_width="match_parent"
         android:layout_height="65dp"
         android:background="@drawable/bg_cl_top_views"
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/ivBackAddNoteTodo"
+            android:id="@+id/ivBackAddNoteTodo_addNote"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginStart="8dp"
@@ -33,7 +33,7 @@
             app:tint="@color/white" />
 
         <EditText
-            android:id="@+id/edtTitleNote"
+            android:id="@+id/edtTitleNote_addNote"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -44,67 +44,160 @@
             android:padding="7dp"
             android:textColor="@color/white"
             android:textColorHint="@color/gray"
-            app:layout_constraintBottom_toBottomOf="@+id/ivBackAddNoteTodo"
-            app:layout_constraintEnd_toStartOf="@+id/ivEditNote"
-            app:layout_constraintStart_toEndOf="@+id/ivBackAddNoteTodo"
-            app:layout_constraintTop_toTopOf="@+id/ivBackAddNoteTodo"
+            app:layout_constraintBottom_toBottomOf="@+id/ivBackAddNoteTodo_addNote"
+            app:layout_constraintEnd_toStartOf="@+id/ivEditNote_addNote"
+            app:layout_constraintStart_toEndOf="@+id/ivBackAddNoteTodo_addNote"
+            app:layout_constraintTop_toTopOf="@+id/ivBackAddNoteTodo_addNote"
             app:layout_constraintVertical_bias="1.0" />
 
 
         <ImageView
-            android:id="@+id/ivEditNote"
+            android:id="@+id/ivEditNote_addNote"
             android:layout_width="35dp"
             android:layout_height="35dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:padding="5dp"
-            android:visibility="gone"
             android:src="@drawable/ic_edit"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ivSaveNoteTodo"
+            app:layout_constraintEnd_toStartOf="@+id/ivSaveNote_addNote"
             app:tint="@color/white" />
 
-            <ImageView
-                android:id="@+id/ivSaveNoteTodo"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
-                android:padding="5dp"
-                android:visibility="gone"
-                android:src="@drawable/ic_save"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:tint="@color/white" />
+        <ImageView
+            android:id="@+id/ivSaveNote_addNote"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:padding="5dp"
+            android:src="@drawable/ic_save"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:tint="@color/white" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <EditText
-        android:id="@+id/edtDescNote"
-        android:layout_width="0dp"
+    <ScrollView
+        android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
-        android:background="@color/transparent"
-        android:ems="10"
-        android:gravity="start"
-        android:hint="@string/hintDesc"
-        android:inputType="textMultiLine"
-        android:padding="7dp"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/clBottomPnl"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topViews" />
+        app:layout_constraintTop_toBottomOf="@+id/clTopViews">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5dp">
+
+            <EditText
+                android:id="@+id/edtDescNote_addNote"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/transparent"
+                android:gravity="start"
+                android:hint="@string/hintDesc"
+                android:lines="40"
+                android:inputType="textMultiLine"
+                android:padding="7dp"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <TextView
+        android:id="@+id/tvFontSizeDisplay_addNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="8dp"
+        android:hint="text size"
+        android:visibility="gone"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clTopViews" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clBottomPnl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_cl_bottom_views"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/ivAlignLeft"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivAlignCenter"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            android:src="@drawable/ic_align_left"/>
+
+        <ImageView
+            android:id="@+id/ivAlignCenter"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivAlignRight"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"
+            android:src="@drawable/ic_align_center" />
+
+        <ImageView
+            android:id="@+id/ivAlignRight"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginEnd="32dp"
+            android:layout_weight="1"
+            android:src="@drawable/ic_align_right"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ivFavourite_addNote"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5" />
+
+        <ImageView
+            android:id="@+id/ivFavourite_addNote"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:elevation="10dp"
+            android:padding="7dp"
+            android:src="@drawable/ic_unfavourite"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <include
+        android:id="@+id/include_fontProperties_addNote"
+        layout="@layout/layout_font_properties"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="70dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/ivShowHideFontProp_addNote"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
     <ImageView
-        android:id="@+id/ivFavourite_addNote"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:elevation="10dp"
-        android:padding="7dp"
-        android:src="@drawable/ic_unfavourite"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topViews" />
+        android:id="@+id/ivShowHideFontProp_addNote"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="50dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_arrow_double_left"
+        app:layout_constraintBottom_toTopOf="@id/clBottomPnl"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
