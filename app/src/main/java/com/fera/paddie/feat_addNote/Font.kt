@@ -4,7 +4,7 @@ import android.graphics.Typeface
 
 class _Font {
     companion object {
-        private const val fontSize = 17F
+        private const val fontSize = 15F
         private val typeFace = Typeface.DEFAULT
 
         fun defaultFontProperties(): FontProperties {

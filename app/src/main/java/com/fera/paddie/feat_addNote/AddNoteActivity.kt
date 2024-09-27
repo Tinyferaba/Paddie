@@ -37,7 +37,7 @@ class AddNoteActivity : AppCompatActivity() {
     private var changesMade = false
     private var favourite = false
     private lateinit var tblNote: TblNote
-    private var lyricsGravity: LyricsGravity = LyricsGravity.LEFT
+    private var currentTextGravity: TextGravity = TextGravity.GRAVITY
 
     private lateinit var ivBack: ImageView      //Image View
     private lateinit var ivSave: ImageView
@@ -74,6 +74,8 @@ class AddNoteActivity : AppCompatActivity() {
 
         initViews()
         addActionListeners()
+
+        setTextProperties()
         loadNote()
 
         setStatusBarColor()
@@ -175,10 +177,10 @@ class AddNoteActivity : AppCompatActivity() {
         ivRestoreFontProps.setOnClickListener {
             val fontProperties = _Font.defaultFontProperties()
 
-            val boldColor = ContextCompat.getColor(this, R.color.white)
+            val boldColor = ContextCompat.getColor(this, R.color.gray)
             ivBold.setColorFilter(boldColor, PorterDuff.Mode.SRC_IN)
 
-            val italicColor = ContextCompat.getColor(this, R.color.white)
+            val italicColor = ContextCompat.getColor(this, R.color.gray)
             ivItalicize.setColorFilter(italicColor, PorterDuff.Mode.SRC_IN)
 
             edtDesc.setTypeface(fontProperties.typeface)
@@ -190,6 +192,16 @@ class AddNoteActivity : AppCompatActivity() {
             } else {
                 showFontPropertiesPanel()
             }
+        }
+
+        ivAlignLeft.setOnClickListener {
+            changeGravity(TextGravity.LEFT)
+        }
+        ivAlignCenter.setOnClickListener {
+            changeGravity(TextGravity.CENTER)
+        }
+        ivAlignRight.setOnClickListener {
+            changeGravity(TextGravity.RIGHT)
         }
 
         ivFavourite.setOnClickListener {
@@ -211,168 +223,6 @@ class AddNoteActivity : AppCompatActivity() {
         edtDesc.addTextChangedListener { changesMade() }
     }
 
-    private fun hideFontPropertiesPanel() {
-        includeProperties.visibility = View.GONE
-        ivShowHideFontProperties.setImageResource(R.drawable.ic_arrow_double_left)
-    }
-
-    private fun showFontPropertiesPanel() {
-        includeProperties.visibility = View.VISIBLE
-        ivShowHideFontProperties.setImageResource(R.drawable.ic_arrow_double_right)
-    }
-
-    private fun toggleBoldAndItalic(bold: Boolean, italic: Boolean) {
-        /*  ######### Description #########
-            Toggles between bold, italic and default when bold/italic btn is pressed
-        */
-        if (bold) {
-            if (italic) {
-                edtDesc.setTypeface(edtDesc.typeface, Typeface.BOLD_ITALIC)
-            } else {
-                edtDesc.setTypeface(edtDesc.typeface, Typeface.BOLD)
-            }
-        } else if (italic) {
-            edtDesc.setTypeface(edtDesc.typeface, Typeface.ITALIC)
-        } else {
-            edtDesc.setTypeface(Typeface.DEFAULT)
-        }
-
-        //setting colors
-        if (bold) {
-            val boldColor = ContextCompat.getColor(this, R.color.white)
-            ivBold.setColorFilter(boldColor, PorterDuff.Mode.SRC_IN)
-        } else {
-            val boldColor = ContextCompat.getColor(this, R.color.black)
-            ivBold.setColorFilter(boldColor, PorterDuff.Mode.SRC_IN)
-        }
-
-        //setting colors
-        if (italic) {
-            val italicColor = ContextCompat.getColor(this, R.color.white)
-            ivItalicize.setColorFilter(italicColor, PorterDuff.Mode.SRC_IN)
-        } else {
-            val italicColor = ContextCompat.getColor(this, R.color.black)
-            ivItalicize.setColorFilter(italicColor, PorterDuff.Mode.SRC_IN)
-        }
-    }
-
-
-    private fun setTextProperties() {
-        val sharedPreferences = getSharedPreferences(CONST.SHARED_PREF_FONT, MODE_PRIVATE)
-        val fontProperties = _Font.defaultFontProperties()
-
-        edtDesc.textSize = sharedPreferences.getFloat(CONST.FONT_SIZE, fontProperties.fontSize)
-        val isBold = sharedPreferences.getBoolean(CONST.IS_BOLD, fontProperties.typeface.isBold)
-        val isItalic =
-            sharedPreferences.getBoolean(CONST.IS_ITALIC, fontProperties.typeface.isItalic)
-
-        toggleBoldAndItalic(isBold, isItalic)
-
-
-        val textGravity =
-            sharedPreferences.getString(LyricsGravity.GRAVITY.name, LyricsGravity.CENTER.name)
-
-        when (textGravity) {
-            LyricsGravity.LEFT.name -> {
-                changeGravity(LyricsGravity.LEFT)
-            }
-
-            LyricsGravity.CENTER.name -> {
-                changeGravity(LyricsGravity.CENTER)
-            }
-
-            LyricsGravity.RIGHT.name -> {
-                changeGravity(LyricsGravity.RIGHT)
-            }
-
-            else -> {}
-        }
-    }
-
-
-    private fun changeGravity(toAlignment: LyricsGravity) {
-        val selectedColor = ContextCompat.getColor(this, R.color.white)
-        val unselectedColor = ContextCompat.getColor(this, R.color.gray)
-
-        if (toAlignment != lyricsGravity) {
-            //Unselect alignment
-            when (lyricsGravity) {
-                LyricsGravity.LEFT -> {
-                    ivAlignLeft.setColorFilter(unselectedColor, PorterDuff.Mode.SRC_IN)
-                }
-
-                LyricsGravity.CENTER -> {
-                    ivAlignCenter.setColorFilter(unselectedColor, PorterDuff.Mode.SRC_IN)
-                }
-
-                LyricsGravity.RIGHT -> {
-                    ivAlignRight.setColorFilter(unselectedColor, PorterDuff.Mode.SRC_IN)
-                }
-
-                else -> {}
-            }
-
-            //Select alignment
-            when (toAlignment) {
-                LyricsGravity.LEFT -> {
-                    edtDesc.gravity = android.view.Gravity.START
-                    ivAlignLeft.setColorFilter(selectedColor, PorterDuff.Mode.SRC_IN)
-                }
-
-                LyricsGravity.CENTER -> {
-                    edtDesc.gravity = android.view.Gravity.CENTER_HORIZONTAL
-                    ivAlignCenter.setColorFilter(selectedColor, PorterDuff.Mode.SRC_IN)
-                }
-
-                LyricsGravity.RIGHT -> {
-                    edtDesc.gravity = android.view.Gravity.END
-                    ivAlignRight.setColorFilter(selectedColor, PorterDuff.Mode.SRC_IN)
-                }
-
-                else -> {}
-            }
-            lyricsGravity = toAlignment
-            lyricsGravity = toAlignment
-        }
-    }
-
-    private fun decreaseFontSize() {
-        val fontSizePx= edtDesc.textSize
-        var fontSizeSp = fontSizePx / resources.displayMetrics.density
-        if (fontSizeSp > 10) {
-            fontSizeSp -= 1
-            edtDesc.textSize = fontSizeSp
-            tvDisplayFontSize.text = fontSizeSp.toString()
-            toggleDisplayFontSize()
-        } else {
-            Toast.makeText(this, "Min reached: 10sp!", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun increaseFontSize() {
-        val fontSizePx = edtDesc.textSize
-        var fontSizeSp = fontSizePx / resources.displayMetrics.density
-        if (fontSizeSp < 25) {
-            fontSizeSp += 1
-            edtDesc.textSize = fontSizeSp
-            tvDisplayFontSize.text = fontSizeSp.toString()
-            toggleDisplayFontSize()
-        } else {
-            Toast.makeText(this, "Max reached: 25sp!", Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    private fun toggleDisplayFontSize() {
-        /*  ######### Description #########
-            Displays the Font size for 2 seconds and hide the TextView
-            when the increase/decrease font size btn is pressed
-        */
-        CoroutineScope(Dispatchers.Main).launch {
-            tvDisplayFontSize.visibility = View.VISIBLE
-            delay(700)
-            tvDisplayFontSize.visibility = View.GONE
-        }
-    }
     private fun initViews() {
         tblNote = TblNote()
         noteControllers = NoteControllers(application)
@@ -400,19 +250,84 @@ class AddNoteActivity : AppCompatActivity() {
         ivFavourite = findViewById(R.id.ivFavourite_addNote)
     }
 
+    private fun setTextProperties() {
+        val sharedPreferences = getSharedPreferences(CONST.SHARED_PREF_FONT, MODE_PRIVATE)
+        val fontProperties = _Font.defaultFontProperties()
 
-    private fun updateNote() {
-        if (validateNote()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                tblNote.title = edtTitle.text.toString()
-                tblNote.description = edtDesc.text.toString()
-                tblNote.favourite = favourite
-                tblNote.dateModified = Date().time
+        edtDesc.textSize = sharedPreferences.getFloat(CONST.FONT_SIZE, fontProperties.fontSize)
+        val isBold = sharedPreferences.getBoolean(CONST.IS_BOLD, fontProperties.typeface.isBold)
+        val isItalic = sharedPreferences.getBoolean(CONST.IS_ITALIC, fontProperties.typeface.isItalic)
 
-                noteControllers.updateNote(tblNote)
+        toggleBoldAndItalic(isBold, isItalic)
+
+
+        val textGravity = sharedPreferences.getString(TextGravity.GRAVITY.name, TextGravity.LEFT.name)
+
+        when (textGravity) {
+            TextGravity.LEFT.name -> {
+                changeGravity(TextGravity.LEFT)
+            }
+
+            TextGravity.CENTER.name -> {
+                changeGravity(TextGravity.CENTER)
+            }
+
+            TextGravity.RIGHT.name -> {
+                changeGravity(TextGravity.RIGHT)
+            }
+            else -> {
+                changeGravity(TextGravity.LEFT)
             }
         }
     }
+
+
+    private fun changeGravity(newTextGravity: TextGravity) {
+        val selectedColor = ContextCompat.getColor(this, R.color.white)
+        val unselectedColor = ContextCompat.getColor(this, R.color.gray)
+
+        if (newTextGravity != currentTextGravity) {
+            //Unselect alignment
+            when (currentTextGravity) {
+                TextGravity.LEFT -> {
+                    ivAlignLeft.setColorFilter(unselectedColor, PorterDuff.Mode.SRC_IN)
+                }
+
+                TextGravity.CENTER -> {
+                    ivAlignCenter.setColorFilter(unselectedColor, PorterDuff.Mode.SRC_IN)
+                }
+
+                TextGravity.RIGHT -> {
+                    ivAlignRight.setColorFilter(unselectedColor, PorterDuff.Mode.SRC_IN)
+                }
+
+                else -> {  }
+            }
+
+            //Select alignment
+            when (newTextGravity) {
+                TextGravity.LEFT -> {
+                    edtDesc.gravity = android.view.Gravity.START
+                    ivAlignLeft.setColorFilter(selectedColor, PorterDuff.Mode.SRC_IN)
+                }
+
+                TextGravity.CENTER -> {
+                    edtDesc.gravity = android.view.Gravity.CENTER_HORIZONTAL
+                    ivAlignCenter.setColorFilter(selectedColor, PorterDuff.Mode.SRC_IN)
+                }
+
+                TextGravity.RIGHT -> {
+                    edtDesc.gravity = android.view.Gravity.END
+                    ivAlignRight.setColorFilter(selectedColor, PorterDuff.Mode.SRC_IN)
+                }
+
+                else -> {  }
+            }
+
+            currentTextGravity = newTextGravity
+        }
+    }
+
 
     private fun loadNote() {
         val tmpNote = intent.getParcelableExtra<TblNote>(CONST.KEY_TBL_NOTE)
@@ -453,7 +368,6 @@ class AddNoteActivity : AppCompatActivity() {
         }
     }
 
-
     private fun saveNote() {
         if (validateNote()) {
             CoroutineScope(Dispatchers.IO).launch {
@@ -489,6 +403,124 @@ class AddNoteActivity : AppCompatActivity() {
         CoroutineScope(Dispatchers.IO).launch {
             noteControllers.updateFavourite(id, favourite)
         }
+    }
+
+    private fun toggleDisplayFontSize() {
+        /*  ######### Description #########
+            Displays the Font size for 2 seconds and hide the TextView
+            when the increase/decrease font size btn is pressed
+        */
+        CoroutineScope(Dispatchers.Main).launch {
+            tvDisplayFontSize.visibility = View.VISIBLE
+            delay(700)
+            tvDisplayFontSize.visibility = View.GONE
+        }
+    }
+
+    private fun updateNote() {
+        if (validateNote()) {
+            CoroutineScope(Dispatchers.IO).launch {
+                tblNote.title = edtTitle.text.toString()
+                tblNote.description = edtDesc.text.toString()
+                tblNote.favourite = favourite
+                tblNote.dateModified = Date().time
+
+                noteControllers.updateNote(tblNote)
+            }
+        }
+    }
+
+    private fun saveTextProps() {
+        val isItalic = edtDesc.typeface.isItalic
+        val isBold = edtDesc.typeface.isBold
+        val fontSizePx = edtDesc.textSize     // This is given in pixels
+        val fontSizeSp = fontSizePx / resources.displayMetrics.density  //Converting to SP
+
+        val sharedPref = getSharedPreferences(CONST.SHARED_PREF_FONT, MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putBoolean(CONST.IS_BOLD, isBold)
+        editor.putBoolean(CONST.IS_ITALIC, isItalic)
+        editor.putFloat(CONST.FONT_SIZE, fontSizeSp)
+
+        editor.putString(TextGravity.GRAVITY.name, currentTextGravity.name)
+
+        editor.apply()
+    }
+
+    private fun decreaseFontSize() {
+        val fontSizePx= edtDesc.textSize
+        var fontSizeSp = fontSizePx / resources.displayMetrics.density
+        if (fontSizeSp > 10) {
+            fontSizeSp -= 1
+            edtDesc.textSize = fontSizeSp
+            tvDisplayFontSize.text = fontSizeSp.toString()
+            toggleDisplayFontSize()
+        } else {
+            Toast.makeText(this, "Min reached: 10sp!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun increaseFontSize() {
+        val fontSizePx = edtDesc.textSize
+        var fontSizeSp = fontSizePx / resources.displayMetrics.density
+        if (fontSizeSp < 25) {
+            fontSizeSp += 1
+            edtDesc.textSize = fontSizeSp
+            tvDisplayFontSize.text = fontSizeSp.toString()
+            toggleDisplayFontSize()
+        } else {
+            Toast.makeText(this, "Max reached: 25sp!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun hideFontPropertiesPanel() {
+        includeProperties.visibility = View.GONE
+        ivShowHideFontProperties.setImageResource(R.drawable.ic_arrow_double_left)
+    }
+
+    private fun showFontPropertiesPanel() {
+        includeProperties.visibility = View.VISIBLE
+        ivShowHideFontProperties.setImageResource(R.drawable.ic_arrow_double_right)
+    }
+
+    private fun toggleBoldAndItalic(bold: Boolean, italic: Boolean) {
+        /*  ######### Description #########
+            Toggles between bold, italic and default when bold/italic btn is pressed
+        */
+        if (bold) {
+            if (italic) {
+                edtDesc.setTypeface(edtDesc.typeface, Typeface.BOLD_ITALIC)
+            } else {
+                edtDesc.setTypeface(edtDesc.typeface, Typeface.BOLD)
+            }
+        } else if (italic) {
+            edtDesc.setTypeface(edtDesc.typeface, Typeface.ITALIC)
+        } else {
+            edtDesc.setTypeface(Typeface.DEFAULT)
+        }
+
+        //setting colors
+        if (bold) {
+            val boldColor = ContextCompat.getColor(this, R.color.white)
+            ivBold.setColorFilter(boldColor, PorterDuff.Mode.SRC_IN)
+        } else {
+            val boldColor = ContextCompat.getColor(this, R.color.gray)
+            ivBold.setColorFilter(boldColor, PorterDuff.Mode.SRC_IN)
+        }
+
+        //setting colors
+        if (italic) {
+            val italicColor = ContextCompat.getColor(this, R.color.white)
+            ivItalicize.setColorFilter(italicColor, PorterDuff.Mode.SRC_IN)
+        } else {
+            val italicColor = ContextCompat.getColor(this, R.color.gray)
+            ivItalicize.setColorFilter(italicColor, PorterDuff.Mode.SRC_IN)
+        }
+    }
+
+    override fun onPause() {
+        saveTextProps()
+        super.onPause()
     }
 
     override fun onBackPressed() {

@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/menuUploadToCloud"
-        android:title="Upload To Cloud"
+        android:id="@+id/menuCloud"
+        android:title="Cloud"
         android:icon="@drawable/ic_backup"/>
-    <item
-        android:id="@+id/menuDownloadFromCloud"
-        android:title="Donwload From Cloud"
-        android:icon="@drawable/ic_download_notes"/>
     <item
         android:id="@+id/menuAboutUs"
         android:title="About Us"

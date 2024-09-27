@@ -74,4 +74,10 @@
     <string name="idNumber">ID number</string>
     <string name="phone_number">123456789</string>
     <string name="emailAddress">example@gmail.com</string>
+    <string name="uploadToCloud">Upload To CLOUD</string>
+    <string name="downloadFromCloud">Download From CLOUD</string>
+    <string name="notYetUploaded">Not Yet Uploaded</string>
+    <string name="alreadyUploaded">Already Uploaded</string>
+    <string name="notYetDownloaded">Not Yet Downloaded</string>
+    <string name="alreadyDownloaded">Already Downloaded</string>
 </resources>

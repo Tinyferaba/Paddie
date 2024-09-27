@@ -103,7 +103,7 @@
                 android:lines="40"
                 android:inputType="textMultiLine"
                 android:padding="7dp"
-                android:textSize="13sp" />
+                android:textSize="15sp" />
         </LinearLayout>
 
     </ScrollView>
@@ -134,37 +134,35 @@
             android:id="@+id/ivAlignLeft"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="24dp"
             android:layout_weight="1"
+            android:src="@drawable/ic_align_left"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ivAlignCenter"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
-            android:src="@drawable/ic_align_left"/>
+            app:layout_constraintVertical_bias="0.5" />
 
         <ImageView
             android:id="@+id/ivAlignCenter"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ivAlignRight"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5"
-            android:src="@drawable/ic_align_center" />
+            android:src="@drawable/ic_align_center"
+            app:layout_constraintBottom_toBottomOf="@+id/ivAlignLeft"
+            app:layout_constraintStart_toEndOf="@+id/ivAlignLeft"
+            app:layout_constraintTop_toTopOf="@+id/ivAlignLeft" />
 
         <ImageView
             android:id="@+id/ivAlignRight"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginStart="8dp"
             android:layout_weight="1"
             android:src="@drawable/ic_align_right"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/ivFavourite_addNote"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
+            app:layout_constraintBottom_toBottomOf="@+id/ivAlignCenter"
+            app:layout_constraintStart_toEndOf="@+id/ivAlignCenter"
+            app:layout_constraintTop_toTopOf="@+id/ivAlignCenter" />
 
         <ImageView
             android:id="@+id/ivFavourite_addNote"
@@ -183,9 +181,9 @@
         layout="@layout/layout_font_properties"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="70dp"
-        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@id/ivShowHideFontProp_addNote"
         app:layout_constraintEnd_toEndOf="parent" />
 

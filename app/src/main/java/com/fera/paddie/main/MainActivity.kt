@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private lateinit var ivShowSideDrawer: ImageView
 
     private lateinit var ivShowHideSortOption: ImageView        // Sort Options
-    private lateinit var include_sortOptions: View
+    private lateinit var includeSortOptions: View
     private lateinit var ivSortBy: ImageView
     private lateinit var ivFavourites: ImageView
 
@@ -93,12 +93,12 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     //######### NOTEs & TODOs List PROPERTY #########//
     private lateinit var rvNoteList: RecyclerView
     private lateinit var adapterNoteList: AdapterNoteList
-    private var listNotes = emptyList<TblNote>()
+    private var listByTitle = emptyList<TblNote>()
     private var noteListDelete = mutableListOf<TblNote>()
 
     //######### CONTROLLERS PROPERTY #########//
     private lateinit var userController: UserController
-    private lateinit var noteControllers: NoteControllers
+    private lateinit var noteController: NoteControllers
     private lateinit var mDBRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -136,18 +136,9 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
                     true
                 }
 
-                R.id.menuUploadToCloud -> {
+                R.id.menuCloud -> {
                     drawerLayout.closeDrawer(GravityCompat.START)
                     val intent = Intent(this, UploadToCloudActivity::class.java)
-                    intent.putExtra("uploadToCloud", true)
-                    startActivity(intent)
-                    true
-                }
-
-                R.id.menuDownloadFromCloud -> {
-                    drawerLayout.closeDrawer(GravityCompat.START)
-                    val intent = Intent(this, UploadToCloudActivity::class.java)
-                    intent.putExtra("uploadToCloud", false)
                     startActivity(intent)
                     true
                 }
@@ -168,13 +159,18 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
         }
         ivShowHideSortOption.setOnClickListener {
-            showHideSortOptions(include_sortOptions.isVisible)
+            showHideSortOptions(includeSortOptions.isVisible)
         }
         ivSortBy.setOnClickListener {
             changeSortOrder()
         }
         ivFavourites.setOnClickListener {
             viewFavourites = !viewFavourites
+            if (viewFavourites){
+                ivFavourites.setImageResource(R.drawable.ic_favourite)
+            } else {
+                ivFavourites.setImageResource(R.drawable.ic_unfavourite)
+            }
             changeSortOrder()
         }
         ivAddNote.setOnClickListener {
@@ -196,10 +192,8 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
             noteListDelete.clear()
 
             if (checked) {
-//                ivUploadToCloud.visibility = View.VISIBLE
                 adapterNoteList.checkAll(true)
             } else {
-//                ivUploadToCloud.visibility = View.GONE
                 adapterNoteList.checkAll(false)
             }
         }
@@ -269,72 +263,130 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         }
     }
 
+    fun sortBy(sortType: SortOrderType){
+            when (sortType) {
+                SortOrderType.TITLE_ASC_FAV -> {
+                    noteController.getAllFavHymnsByTitleASC(currentGroup).observe(this){
+                        listByTitle = it
+                        updateList()
+                    }
+                }
 
-    private fun sortBy(sortType: SortOrderType) {
-        when (sortType) {
-            SortOrderType.TITLE_ASC -> {
-                noteControllers.getAllHymnsByTitleASC(currentGroup).observe(this) {
-                    listNotes = it
-                    updateList()
+                SortOrderType.TITLE_DESC_FAV -> {
+                    noteController.getAllFavHymnsByTitleDESC(currentGroup).observe(this){
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+
+                SortOrderType.DESCRIPTION_ASC_FAV -> {
+                    noteController.getAllFavByDescASC(currentGroup).observe(this){
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+
+                SortOrderType.DESCRIPTION_DESC_FAV -> {
+                    noteController.getAllFavByDescDESC(currentGroup).observe(this){
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+                SortOrderType.TITLE_ASC -> {
+                    noteController.getAllHymnsByTitleASC(currentGroup).observe(this){
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+
+                SortOrderType.TITLE_DESC -> {
+                    noteController.getAllHymnsByTitleDESC(currentGroup).observe(this){
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+
+                SortOrderType.DESCRIPTION_ASC -> {
+                    noteController.getAllByDescASC(currentGroup).observe(this){
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+
+                SortOrderType.DESCRIPTION_DESC -> {
+                    noteController.getAllByDescDESC(currentGroup).observe(this){
+                        listByTitle = it
+                        updateList()
+                    }
                 }
             }
-            SortOrderType.TITLE_DESC -> {
-                noteControllers.getAllHymnsByTitleDESC(currentGroup).observe(this) {
-                    listNotes = it
-                    updateList()
-                }
-            }
-            SortOrderType.TITLE_ASC_FAV -> {
-                noteControllers.getAllFavHymnsByTitleASC(currentGroup).observe(this) {
-                    listNotes = it
-                    updateList()
-                }
-            }
-            SortOrderType.TITLE_DESC_FAV -> {
-                noteControllers.getAllFavHymnsByTitleDESC(currentGroup).observe(this) {
-                    listNotes = it
-                    updateList()
-                }
-            }
-            SortOrderType.DESCRIPTION_ASC -> {
-                noteControllers.getAllByDescASC(currentGroup).observe(this) {
-                    listNotes = it
-                    updateList()
-                }
-            }
-            SortOrderType.DESCRIPTION_DESC -> {
-                noteControllers.getAllByDescDESC(currentGroup).observe(this) {
-                    listNotes = it
-                    updateList()
-                }
-            }
-            SortOrderType.DESCRIPTION_ASC_FAV -> {
-                noteControllers.getAllFavByDescASC(currentGroup).observe(this) {
-                    listNotes = it
-                    updateList()
-                }
-            }
-            SortOrderType.DESCRIPTION_DESC_FAV -> {
-                noteControllers.getAllFavByDescDESC(currentGroup).observe(this) {
-                    listNotes = it
-                    updateList()
-                }
-            }
-        }
     }
 
+//    private fun sortBy(sortType: SortOrderType) {
+//        when (sortType) {
+//            SortOrderType.TITLE_ASC -> {
+//                noteControllers.getAllHymnsByTitleASC(currentGroup).observe(this) {
+//                    listNotes = it
+//                    updateList()
+//                }
+//            }
+//            SortOrderType.TITLE_DESC -> {
+//                noteControllers.getAllHymnsByTitleDESC(currentGroup).observe(this) {
+//                    listNotes = it
+//                    updateList()
+//                }
+//            }
+//            SortOrderType.TITLE_ASC_FAV -> {
+//                noteControllers.getAllFavHymnsByTitleASC(currentGroup).observe(this) {
+//                    listNotes = it
+//                    updateList()
+//                }
+//            }
+//            SortOrderType.TITLE_DESC_FAV -> {
+//                noteControllers.getAllFavHymnsByTitleDESC(currentGroup).observe(this) {
+//                    listNotes = it
+//                    updateList()
+//                }
+//            }
+//            SortOrderType.DESCRIPTION_ASC -> {
+//                noteControllers.getAllByDescASC(currentGroup).observe(this) {
+//                    listNotes = it
+//                    updateList()
+//                }
+//            }
+//            SortOrderType.DESCRIPTION_DESC -> {
+//                noteControllers.getAllByDescDESC(currentGroup).observe(this) {
+//                    listNotes = it
+//                    updateList()
+//                }
+//            }
+//            SortOrderType.DESCRIPTION_ASC_FAV -> {
+//                noteControllers.getAllFavByDescASC(currentGroup).observe(this) {
+//                    listNotes = it
+//                    updateList()
+//                }
+//            }
+//            SortOrderType.DESCRIPTION_DESC_FAV -> {
+//                noteControllers.getAllFavByDescDESC(currentGroup).observe(this) {
+//                    listNotes = it
+//                    updateList()
+//                }
+//            }
+//        }
+//    }
+
     private fun updateList() {
-        adapterNoteList.updateList(listNotes)
+        adapterNoteList.updateList(listByTitle)
     }
 
 
 
     private fun showHideSortOptions(hide: Boolean) {
         if (hide) {
-            include_sortOptions.visibility = View.GONE
+            includeSortOptions.visibility = View.GONE
             ivShowHideSortOption.setImageResource(R.drawable.ic_down_arrow)
         } else {
-            include_sortOptions.visibility = View.VISIBLE
+            includeSortOptions.visibility = View.VISIBLE
             ivShowHideSortOption.setImageResource(R.drawable.ic_up_arrow)
         }
     }
@@ -342,7 +394,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private fun deleteSelectedNotes() {
         val job = noteListDelete.map { tblNote ->
             CoroutineScope(Dispatchers.IO).launch {
-                noteControllers.deleteNote(tblNote.pkNoteId!!)
+                noteController.deleteNote(tblNote.pkNoteId!!)
             }
         }
 
@@ -372,7 +424,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         ivShowSideDrawer = findViewById(R.id.ivShowSideDrawer)
 
         ivShowHideSortOption = findViewById(R.id.ivShowHideSortOption)
-        include_sortOptions = findViewById(R.id.include_sortOption_main)
+        includeSortOptions = findViewById(R.id.include_sortOption_main)
         ivSortBy = findViewById(R.id.ivSortBy)
         ivFavourites = findViewById(R.id.ivFavourites)
 
@@ -386,15 +438,15 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
         //######### CONTROLLERS #########//
         userController = ViewModelProvider(this)[UserController::class.java]
-        noteControllers = ViewModelProvider(this)[NoteControllers::class.java]
+        noteController = ViewModelProvider(this)[NoteControllers::class.java]
 
         //######### RECYCLER VIEWS #########//
         rvNoteList = findViewById(R.id.rvNoteList_home)
         rvNoteList.layoutManager = LinearLayoutManager(this)
-        adapterNoteList = AdapterNoteList(this, listNotes, this)
+        adapterNoteList = AdapterNoteList(this, listByTitle, this)
         rvNoteList.adapter = adapterNoteList
 
-        noteControllers.allNotes.observe(this) { noteList ->
+        noteController.allNotes.observe(this) { noteList ->
             if (noteList.isEmpty()) {
                 llCheckBox.visibility = View.GONE
                 chkbxSelectAll.isChecked = false
@@ -530,16 +582,16 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
     private fun searchNotes() {
         if (edtSearchField.text.isEmpty()) {
-            noteControllers.allNotes.observe(this) { noteList ->
+            noteController.allNotes.observe(this) { noteList ->
                 adapterNoteList.updateList(noteList)
             }
         } else {
             val searchText = edtSearchField.text.toString()
 
             CoroutineScope(Dispatchers.IO).launch {
-                listNotes = noteControllers.searchNotes(searchText)
+                listByTitle = noteController.searchNotes(searchText)
                 withContext(Dispatchers.Main) {
-                    adapterNoteList.updateList(listNotes)
+                    adapterNoteList.updateList(listByTitle)
                     adapterNoteList.notifyDataSetChanged()
                 }
             }
@@ -553,25 +605,25 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     override fun updateNote(tblNote: TblNote) {
         CoroutineScope(Dispatchers.IO).launch {
             tblNote.updated = true
-            noteControllers.updateNote(tblNote)
+            noteController.updateNote(tblNote)
         }
     }
 
     override fun deleteNote(id: Int) {
         CoroutineScope(Dispatchers.IO).launch {
-            noteControllers.deleteNote(id)
+            noteController.deleteNote(id)
         }
     }
 
     override fun updateFavourite(id: Int, favourite: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
-            noteControllers.updateFavourite(id, favourite)
+            noteController.updateFavourite(id, favourite)
         }
     }
 
     private suspend fun getNote(id: Int): TblNote {
         return withContext(Dispatchers.IO) {
-            noteControllers.getNote(id)
+            noteController.getNote(id)
         }
     }
 

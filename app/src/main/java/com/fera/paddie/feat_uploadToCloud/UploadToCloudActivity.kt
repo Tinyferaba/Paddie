@@ -65,6 +65,9 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
     private lateinit var rvNoteListAlreadyUploaded: RecyclerView
     private lateinit var adapterNoteListAlreadyUploaded: AdapterUploadNoteList
 
+    private lateinit var tvBackup: TextView
+    private lateinit var tvDownload: TextView
+
     //######### CONTROLLERS PROPERTY #########//
     private lateinit var noteControllers: NoteControllers
 
@@ -86,9 +89,8 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
             insets
         }
 
-        setMode()
         initViews()
-        setUI()
+        setMode(MODE.UPLOAD_TO_CLOUD)
 
         addActionListeners()
         setStatusBarColor()
@@ -116,6 +118,12 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
                     downloadFromCloud()
                 }
             }
+        }
+        tvBackup.setOnClickListener {
+            setMode(MODE.UPLOAD_TO_CLOUD)
+        }
+        tvDownload.setOnClickListener {
+            setMode(MODE.DOWNLOAD_FROM_CLOUD)
         }
     }
 
@@ -181,13 +189,15 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
 
         rvNoteListAlreadyUploaded = findViewById(R.id.rvNoteListUploaded_toCloud)
         rvNoteListAlreadyUploaded.layoutManager = LinearLayoutManager(this)
-        adapterNoteListAlreadyUploaded =
-            AdapterUploadNoteList(this, noteListAlreadyUploaded, this, true)
+        adapterNoteListAlreadyUploaded = AdapterUploadNoteList(this, noteListAlreadyUploaded, this, true)
         rvNoteListAlreadyUploaded.adapter = adapterNoteListAlreadyUploaded
         setupSwipeToDelete(rvNoteListAlreadyUploaded, adapterNoteListAlreadyUploaded)
         noteControllers.getAllUploadedNotes.observe(this) { noteList ->
             adapterNoteListAlreadyUploaded.updateNoteList(noteList)
         }
+
+        tvBackup = findViewById(R.id.tvBackUpNotes_uploadNoteActivity)
+        tvDownload = findViewById(R.id.tvDownloadNotes_uploadNoteActivity)
     }
 
     private suspend fun uploadToCloud() {
@@ -373,25 +383,26 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         }
     }
 
-    private fun setMode() {
-        val uploadToCloud = intent.getBooleanExtra("uploadToCloud", true)
-        if (uploadToCloud)
-            mode = MODE.UPLOAD_TO_CLOUD
-        else
-            mode = MODE.DOWNLOAD_FROM_CLOUD
-    }
+//    private fun setMode(mode: MODE) {
+//        this.mode = mode
+//    }
 
-    private fun setUI() {
+    private fun setMode(mode: MODE) {
+        this.mode = mode
         if (mode == MODE.UPLOAD_TO_CLOUD) {
-            findViewById<TextView>(R.id.activityTitle).setText("Upload To Cloud")
-            findViewById<TextView>(R.id.titleDescription).setText("Not Yet Uploaded")
-            findViewById<TextView>(R.id.titleDescription2).setText("Already Uploaded")
+            findViewById<TextView>(R.id.activityTitle).setText(R.string.uploadToCloud)
+            findViewById<TextView>(R.id.titleDescription).setText(R.string.notYetUploaded)
+            findViewById<TextView>(R.id.titleDescription2).setText(R.string.alreadyUploaded)
             ivUploadToCloud.setImageResource(R.drawable.ic_upload)
+            tvDownload.setTextColor(ContextCompat.getColor(this, R.color.gray))
+            tvBackup.setTextColor(ContextCompat.getColor(this, R.color.white))
         } else if (mode == MODE.DOWNLOAD_FROM_CLOUD) {
-            findViewById<TextView>(R.id.activityTitle).setText("Download From Cloud")
-            findViewById<TextView>(R.id.titleDescription).setText("Not Yet Downloaded")
-            findViewById<TextView>(R.id.titleDescription2).setText("Already Downloaded")
+            findViewById<TextView>(R.id.activityTitle).setText(R.string.downloadFromCloud)
+            findViewById<TextView>(R.id.titleDescription).setText(R.string.notYetDownloaded)
+            findViewById<TextView>(R.id.titleDescription2).setText(R.string.alreadyDownloaded)
             ivUploadToCloud.setImageResource(R.drawable.ic_download)
+            tvBackup.setTextColor(ContextCompat.getColor(this, R.color.gray))
+            tvDownload.setTextColor(ContextCompat.getColor(this, R.color.white))
         }
     }
 

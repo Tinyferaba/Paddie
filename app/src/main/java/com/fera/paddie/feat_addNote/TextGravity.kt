@@ -1,6 +1,6 @@
 package com.fera.paddie.feat_addNote
 
-enum class LyricsGravity(type: String) {
+enum class TextGravity(type: String) {
     LEFT("left"),
     CENTER("center"),
     RIGHT("right"),
