@@ -61,13 +61,13 @@ interface NoteDao {
     fun getAllFavHymnsByTitleDESC(): LiveData<List<TblNote>>
 
     @Query("""
-        select * from tbl_note where favourite = 0
+        select * from tbl_note
         order by title asc
     """)
     fun getAllHymnsByTitleASC(): LiveData<List<TblNote>>
 
     @Query("""
-        select * from tbl_note where favourite = 0
+        select * from tbl_note
         order by title desc
     """)
     fun getAllHymnsByTitleDESC(): LiveData<List<TblNote>>
@@ -85,13 +85,13 @@ interface NoteDao {
     fun getAllFavByDescDESC(): LiveData<List<TblNote>>
 
     @Query("""
-        select * from tbl_note where favourite = 0
+        select * from tbl_note
         order by description asc
     """)
     fun getAllByDescASC(): LiveData<List<TblNote>>
 
     @Query("""
-        select * from tbl_note where favourite = 0
+        select * from tbl_note
         order by description desc
     """)
     fun getAllByDescDESC(): LiveData<List<TblNote>>

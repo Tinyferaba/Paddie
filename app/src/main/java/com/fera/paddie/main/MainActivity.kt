@@ -20,6 +20,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
@@ -59,11 +60,9 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
     //######### CONST #########//
     private var loggedIn = false
-    private var mode = MODE.ADD
+    private var modeMain = ModeMain.ADD
     private var viewFavourites = false
-    private var currentGroup = "all"
 
-    private var previousSortOrder = SortOrderType.TITLE_ASC     // Sort Order
     private var currentSortType = SortOrderType.TITLE_DESC     // Sort Order
     private var nextSortType = SortOrderType.DESCRIPTION_ASC     // Sort Order
 
@@ -77,8 +76,8 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     private lateinit var edtSearchField: EditText
     private lateinit var ivShowSideDrawer: ImageView
 
-    private lateinit var ivShowHideSortOption: ImageView        // Sort Options
-    private lateinit var includeSortOptions: View
+    private lateinit var clSortOptions: ConstraintLayout               // Sort Options
+    private lateinit var ivShowHideSortOption: ImageView
     private lateinit var ivSortBy: ImageView
     private lateinit var ivFavourites: ImageView
 
@@ -159,25 +158,25 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
         }
         ivShowHideSortOption.setOnClickListener {
-            showHideSortOptions(includeSortOptions.isVisible)
+            showHideSortOptions(clSortOptions.isVisible)
         }
         ivSortBy.setOnClickListener {
             changeSortOrder()
         }
         ivFavourites.setOnClickListener {
             viewFavourites = !viewFavourites
-            if (viewFavourites){
+            if (viewFavourites) {
                 ivFavourites.setImageResource(R.drawable.ic_favourite)
             } else {
                 ivFavourites.setImageResource(R.drawable.ic_unfavourite)
             }
-            changeSortOrder()
+            sortNotes()
         }
         ivAddNote.setOnClickListener {
-            if (mode == MODE.ADD) {
+            if (modeMain == ModeMain.ADD) {
                 val intent = Intent(this, AddNoteActivity::class.java)
                 startActivity(intent)
-            } else if (mode == MODE.DELETE) {
+            } else if (modeMain == ModeMain.DELETE) {
                 deleteSelectedNotes()
             }
         }
@@ -186,7 +185,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         }
 
         chkbxSelectAll.setOnClickListener {
-            mode = MODE.DELETE
+            modeMain = ModeMain.DELETE
             val checked = chkbxSelectAll.isChecked
 
             noteListDelete.clear()
@@ -204,189 +203,117 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     }
 
     private fun changeSortOrder() {
-        if (viewFavourites){
-            when(nextSortType){
-                SortOrderType.TITLE_ASC_FAV -> {
-                    ivSortBy.setImageResource(R.drawable.ic_sort_title_asc)
-                    currentSortType = nextSortType
-                    sortBy(currentSortType)
-                    nextSortType = SortOrderType.TITLE_DESC_FAV
-                }
-                SortOrderType.TITLE_DESC_FAV -> {
-                    ivSortBy.setImageResource(R.drawable.ic_sort_title_desc)
-                    currentSortType = nextSortType
-                    sortBy(currentSortType)
-                    nextSortType = SortOrderType.DESCRIPTION_ASC_FAV
-                }
-                SortOrderType.DESCRIPTION_ASC_FAV -> {
-                    ivSortBy.setImageResource(R.drawable.ic_sort_desc_asc)
-                    currentSortType = nextSortType
-                    sortBy(currentSortType)
-                    nextSortType = SortOrderType.DESCRIPTION_DESC_FAV
-                }
-                SortOrderType.DESCRIPTION_DESC_FAV -> {
-                    ivSortBy.setImageResource(R.drawable.ic_sort_desc_desc)
-                    currentSortType = nextSortType
-                    sortBy(currentSortType)
-                    nextSortType = SortOrderType.TITLE_ASC_FAV
-                }
-                else -> {}
+        when (nextSortType) {
+            SortOrderType.TITLE_ASC -> {
+                ivSortBy.setImageResource(R.drawable.ic_sort_title_asc)
+                currentSortType = nextSortType
+                sortNotes()
+                nextSortType = SortOrderType.TITLE_DESC
             }
-        } else {
-            when(nextSortType){
-                SortOrderType.TITLE_ASC -> {
-                    ivSortBy.setImageResource(R.drawable.ic_sort_title_asc)
-                    currentSortType = nextSortType
-                    sortBy(currentSortType)
-                    nextSortType = SortOrderType.TITLE_DESC
-                }
-                SortOrderType.TITLE_DESC -> {
-                    ivSortBy.setImageResource(R.drawable.ic_sort_title_desc)
-                    currentSortType = nextSortType
-                    sortBy(currentSortType)
-                    nextSortType = SortOrderType.DESCRIPTION_ASC
-                }
-                SortOrderType.DESCRIPTION_ASC -> {
-                    ivSortBy.setImageResource(R.drawable.ic_sort_desc_asc)
-                    currentSortType = nextSortType
-                    sortBy(currentSortType)
-                    nextSortType = SortOrderType.DESCRIPTION_DESC
-                }
-                SortOrderType.DESCRIPTION_DESC -> {
-                    ivSortBy.setImageResource(R.drawable.ic_sort_desc_desc)
-                    currentSortType = nextSortType
-                    sortBy(currentSortType)
-                    nextSortType = SortOrderType.TITLE_ASC
-                }
-                else -> {}
+
+            SortOrderType.TITLE_DESC -> {
+                ivSortBy.setImageResource(R.drawable.ic_sort_title_desc)
+                currentSortType = nextSortType
+                sortNotes()
+                nextSortType = SortOrderType.DESCRIPTION_ASC
+            }
+
+            SortOrderType.DESCRIPTION_ASC -> {
+                ivSortBy.setImageResource(R.drawable.ic_sort_desc_asc)
+                currentSortType = nextSortType
+                sortNotes()
+                nextSortType = SortOrderType.DESCRIPTION_DESC
+            }
+
+            SortOrderType.DESCRIPTION_DESC -> {
+                ivSortBy.setImageResource(R.drawable.ic_sort_desc_desc)
+                currentSortType = nextSortType
+                sortNotes()
+                nextSortType = SortOrderType.TITLE_ASC
             }
         }
     }
 
-    fun sortBy(sortType: SortOrderType){
-            when (sortType) {
-                SortOrderType.TITLE_ASC_FAV -> {
-                    noteController.getAllFavHymnsByTitleASC(currentGroup).observe(this){
-                        listByTitle = it
-                        updateList()
-                    }
-                }
-
-                SortOrderType.TITLE_DESC_FAV -> {
-                    noteController.getAllFavHymnsByTitleDESC(currentGroup).observe(this){
-                        listByTitle = it
-                        updateList()
-                    }
-                }
-
-                SortOrderType.DESCRIPTION_ASC_FAV -> {
-                    noteController.getAllFavByDescASC(currentGroup).observe(this){
-                        listByTitle = it
-                        updateList()
-                    }
-                }
-
-                SortOrderType.DESCRIPTION_DESC_FAV -> {
-                    noteController.getAllFavByDescDESC(currentGroup).observe(this){
-                        listByTitle = it
-                        updateList()
-                    }
-                }
+    private fun sortNotes() {
+        if (viewFavourites) {
+            when (currentSortType) {
                 SortOrderType.TITLE_ASC -> {
-                    noteController.getAllHymnsByTitleASC(currentGroup).observe(this){
+                    noteController.getAllFavHymnsByTitleASC().observe(this) {
                         listByTitle = it
                         updateList()
                     }
                 }
 
                 SortOrderType.TITLE_DESC -> {
-                    noteController.getAllHymnsByTitleDESC(currentGroup).observe(this){
+                    noteController.getAllFavHymnsByTitleDESC().observe(this) {
                         listByTitle = it
                         updateList()
                     }
                 }
 
                 SortOrderType.DESCRIPTION_ASC -> {
-                    noteController.getAllByDescASC(currentGroup).observe(this){
+                    noteController.getAllFavByDescASC().observe(this) {
                         listByTitle = it
                         updateList()
                     }
                 }
 
                 SortOrderType.DESCRIPTION_DESC -> {
-                    noteController.getAllByDescDESC(currentGroup).observe(this){
+                    noteController.getAllFavByDescDESC().observe(this) {
                         listByTitle = it
                         updateList()
                     }
                 }
             }
+        } else {
+            when (currentSortType) {
+                SortOrderType.TITLE_ASC -> {
+                    noteController.getAllHymnsByTitleASC().observe(this) {
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+
+                SortOrderType.TITLE_DESC -> {
+                    noteController.getAllHymnsByTitleDESC().observe(this) {
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+
+                SortOrderType.DESCRIPTION_ASC -> {
+                    noteController.getAllByDescASC().observe(this) {
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+
+                SortOrderType.DESCRIPTION_DESC -> {
+                    noteController.getAllByDescDESC().observe(this) {
+                        listByTitle = it
+                        updateList()
+                    }
+                }
+            }
+        }
     }
 
-//    private fun sortBy(sortType: SortOrderType) {
-//        when (sortType) {
-//            SortOrderType.TITLE_ASC -> {
-//                noteControllers.getAllHymnsByTitleASC(currentGroup).observe(this) {
-//                    listNotes = it
-//                    updateList()
-//                }
-//            }
-//            SortOrderType.TITLE_DESC -> {
-//                noteControllers.getAllHymnsByTitleDESC(currentGroup).observe(this) {
-//                    listNotes = it
-//                    updateList()
-//                }
-//            }
-//            SortOrderType.TITLE_ASC_FAV -> {
-//                noteControllers.getAllFavHymnsByTitleASC(currentGroup).observe(this) {
-//                    listNotes = it
-//                    updateList()
-//                }
-//            }
-//            SortOrderType.TITLE_DESC_FAV -> {
-//                noteControllers.getAllFavHymnsByTitleDESC(currentGroup).observe(this) {
-//                    listNotes = it
-//                    updateList()
-//                }
-//            }
-//            SortOrderType.DESCRIPTION_ASC -> {
-//                noteControllers.getAllByDescASC(currentGroup).observe(this) {
-//                    listNotes = it
-//                    updateList()
-//                }
-//            }
-//            SortOrderType.DESCRIPTION_DESC -> {
-//                noteControllers.getAllByDescDESC(currentGroup).observe(this) {
-//                    listNotes = it
-//                    updateList()
-//                }
-//            }
-//            SortOrderType.DESCRIPTION_ASC_FAV -> {
-//                noteControllers.getAllFavByDescASC(currentGroup).observe(this) {
-//                    listNotes = it
-//                    updateList()
-//                }
-//            }
-//            SortOrderType.DESCRIPTION_DESC_FAV -> {
-//                noteControllers.getAllFavByDescDESC(currentGroup).observe(this) {
-//                    listNotes = it
-//                    updateList()
-//                }
-//            }
-//        }
-//    }
-
+    private var animationCounter = 0
     private fun updateList() {
+        animationCounter++
+        if (animationCounter > 0) {
+            adapterNoteList.animate = false
+        }
         adapterNoteList.updateList(listByTitle)
     }
 
 
-
     private fun showHideSortOptions(hide: Boolean) {
         if (hide) {
-            includeSortOptions.visibility = View.GONE
+            clSortOptions.visibility = View.GONE
             ivShowHideSortOption.setImageResource(R.drawable.ic_down_arrow)
         } else {
-            includeSortOptions.visibility = View.VISIBLE
+            clSortOptions.visibility = View.VISIBLE
             ivShowHideSortOption.setImageResource(R.drawable.ic_up_arrow)
         }
     }
@@ -404,7 +331,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
             noteListDelete.clear()
             if (noteListDelete.isEmpty())
-                changeMode(MODE.ADD)
+                changeMode(ModeMain.ADD)
             adapterNoteList.notifyDataSetChanged()
         }
     }
@@ -423,8 +350,8 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         edtSearchField = findViewById(R.id.edtSearchField)
         ivShowSideDrawer = findViewById(R.id.ivShowSideDrawer)
 
+        clSortOptions = findViewById(R.id.clSortOptions)
         ivShowHideSortOption = findViewById(R.id.ivShowHideSortOption)
-        includeSortOptions = findViewById(R.id.include_sortOption_main)
         ivSortBy = findViewById(R.id.ivSortBy)
         ivFavourites = findViewById(R.id.ivFavourites)
 
@@ -464,9 +391,9 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
                 val intent = Intent(baseContext, AddNoteActivity::class.java)
                 intent.putExtra(CONST.KEY_TBL_NOTE, tblNote)
                 startActivity(intent)
-                if (mode == MODE.DELETE) {
-                    mode = MODE.ADD
-                    changeMode(mode)
+                if (modeMain == ModeMain.DELETE) {
+                    modeMain = ModeMain.ADD
+                    changeMode(modeMain)
                 }
             }
         }
@@ -477,30 +404,30 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         noteListDelete.addAll(noteList)
 
         if (noteListDelete.isNotEmpty())
-            if (mode == MODE.ADD)
-                changeMode(MODE.DELETE)
+            if (modeMain == ModeMain.ADD)
+                changeMode(ModeMain.DELETE)
     }
 
     override fun addToDeleteList(note: TblNote) {
         noteListDelete.add(note)
         if (noteListDelete.isNotEmpty())
-            if (mode == MODE.ADD)
-                changeMode(MODE.DELETE)
+            if (modeMain == ModeMain.ADD)
+                changeMode(ModeMain.DELETE)
     }
 
     override fun clearDeleteList() {
         noteListDelete.clear()
 
         if (noteListDelete.isNotEmpty())
-            changeMode(MODE.DELETE)
+            changeMode(ModeMain.DELETE)
     }
 
-    override fun changeMode(mode: MODE) {
-        this.mode = mode
-        if (mode == MODE.DELETE) {
+    override fun changeMode(modeMain: ModeMain) {
+        this.modeMain = modeMain
+        if (modeMain == ModeMain.DELETE) {
             ivAddNote.setImageResource(R.drawable.ic_delete)
             llCheckBox.visibility = View.VISIBLE
-        } else if (mode == MODE.ADD) {
+        } else if (modeMain == ModeMain.ADD) {
             llCheckBox.visibility = View.GONE
             ivAddNote.setImageResource(R.drawable.ic_add)
         }
@@ -509,8 +436,8 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     override fun removeFromDeletedList(tblNote: TblNote) {
         noteListDelete.remove(tblNote)
         if (noteListDelete.isEmpty())
-            if (mode == MODE.DELETE)
-                changeMode(MODE.ADD)
+            if (modeMain == ModeMain.DELETE)
+                changeMode(ModeMain.ADD)
     }
 
 //    private fun hideViewsOnEmptyList(listIsEmpty: Boolean){
@@ -647,9 +574,9 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         if (drawerLayout.isDrawerOpen(GravityCompat.START))
             showHideSideDrawer()
         else {
-            if (mode == MODE.DELETE) {
-                mode = MODE.ADD
-                changeMode(MODE.ADD)
+            if (modeMain == ModeMain.DELETE) {
+                modeMain = ModeMain.ADD
+                changeMode(ModeMain.ADD)
                 noteListDelete.clear()
                 adapterNoteList.hideCheckBox()
             } else {
@@ -686,15 +613,32 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
                 }
 
                 // Optional: Customize swipe background (red background with delete icon)
-                override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+                override fun onChildDraw(
+                    c: Canvas,
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    dX: Float,
+                    dY: Float,
+                    actionState: Int,
+                    isCurrentlyActive: Boolean
+                ) {
                     // Customize the swipe background and icon (optional)
                     if (dX == 0.0f) {
                         viewHolder.itemView.setBackgroundResource(R.drawable.bg_list_item)
                     } else {
                         val colorObtained = getColorFromValue(this@MainActivity, dX.toInt())
-                        viewHolder.itemView.backgroundTintList = ColorStateList.valueOf(colorObtained)
+                        viewHolder.itemView.backgroundTintList =
+                            ColorStateList.valueOf(colorObtained)
                     }
-                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                    super.onChildDraw(
+                        c,
+                        recyclerView,
+                        viewHolder,
+                        dX,
+                        dY,
+                        actionState,
+                        isCurrentlyActive
+                    )
                 }
             }
 

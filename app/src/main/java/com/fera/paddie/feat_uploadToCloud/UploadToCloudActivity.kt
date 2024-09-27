@@ -44,7 +44,7 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
     private val TAG = "UploadToCloudActivity"
 
     //######### VALUES #########//
-    private var mode = MODE.UPLOAD_TO_CLOUD
+    private var modeCloud = ModeCloud.UPLOAD_TO_CLOUD
 
     //######### VIEWS #########//
     private lateinit var chkbxSelectAll: CheckBox
@@ -90,7 +90,7 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         }
 
         initViews()
-        setMode(MODE.UPLOAD_TO_CLOUD)
+        setMode(ModeCloud.UPLOAD_TO_CLOUD)
 
         addActionListeners()
         setStatusBarColor()
@@ -112,18 +112,18 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         }
         ivUploadToCloud.setOnClickListener {
             lifecycleScope.launch {
-                if (mode == MODE.UPLOAD_TO_CLOUD) {
+                if (modeCloud == ModeCloud.UPLOAD_TO_CLOUD) {
                     uploadToCloud()
-                } else if (mode == MODE.DOWNLOAD_FROM_CLOUD) {
+                } else if (modeCloud == ModeCloud.DOWNLOAD_FROM_CLOUD) {
                     downloadFromCloud()
                 }
             }
         }
         tvBackup.setOnClickListener {
-            setMode(MODE.UPLOAD_TO_CLOUD)
+            setMode(ModeCloud.UPLOAD_TO_CLOUD)
         }
         tvDownload.setOnClickListener {
-            setMode(MODE.DOWNLOAD_FROM_CLOUD)
+            setMode(ModeCloud.DOWNLOAD_FROM_CLOUD)
         }
     }
 
@@ -156,11 +156,11 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
         adapterNoteListToBeUpload = AdapterUploadNoteList(this, noteListToBeUpload, this, false)
         rvNoteListToBeUploaded.adapter = adapterNoteListToBeUpload
         setupSwipeToDelete(rvNoteListToBeUploaded, adapterNoteListToBeUpload)
-        if (mode == MODE.UPLOAD_TO_CLOUD) {
+        if (modeCloud == ModeCloud.UPLOAD_TO_CLOUD) {
             noteControllers.getAllNewNotes.observe(this) { noteList ->
                 adapterNoteListToBeUpload.updateNoteList(noteList)
             }
-        } else if (mode == MODE.DOWNLOAD_FROM_CLOUD) {
+        } else if (modeCloud == ModeCloud.DOWNLOAD_FROM_CLOUD) {
             mDBRef.child(CONST.KEY_TBL_NOTE)
                 .child(mAuth.uid!!)
                 .get()
@@ -300,21 +300,21 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
     }
 
     fun addToUploadList(tblNote: TblNote) {
-        if (mode == MODE.UPLOAD_TO_CLOUD){
+        if (modeCloud == ModeCloud.UPLOAD_TO_CLOUD){
             noteListToBeUpload.add(tblNote)
             hideViewsOnEmptyList(noteListToBeUpload.isEmpty())
-        } else if (mode == MODE.DOWNLOAD_FROM_CLOUD){
+        } else if (modeCloud == ModeCloud.DOWNLOAD_FROM_CLOUD){
             noteToDownload.add(tblNote)
             hideViewsOnEmptyList(noteToDownload.isEmpty())
         }
     }
 
     fun addToUploadList(list: List<TblNote>) {
-        if (mode == MODE.UPLOAD_TO_CLOUD){
+        if (modeCloud == ModeCloud.UPLOAD_TO_CLOUD){
             noteListToBeUpload.clear()
             noteListToBeUpload.addAll(list)
             hideViewsOnEmptyList(noteListToBeUpload.isEmpty())
-        } else if (mode == MODE.DOWNLOAD_FROM_CLOUD){
+        } else if (modeCloud == ModeCloud.DOWNLOAD_FROM_CLOUD){
             noteToDownload.clear()
             noteToDownload.addAll(list)
             hideViewsOnEmptyList(noteToDownload.isEmpty())
@@ -323,10 +323,10 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
     }
 
     fun removeFromUploadList(tblNote: TblNote) {
-        if (mode == MODE.UPLOAD_TO_CLOUD){
+        if (modeCloud == ModeCloud.UPLOAD_TO_CLOUD){
             noteListToBeUpload.remove(tblNote)
             hideViewsOnEmptyList(noteListToBeUpload.isEmpty())
-        } else if (mode == MODE.DOWNLOAD_FROM_CLOUD){
+        } else if (modeCloud == ModeCloud.DOWNLOAD_FROM_CLOUD){
             noteToDownload.remove(tblNote)
             hideViewsOnEmptyList(noteToDownload.isEmpty())
         }
@@ -352,7 +352,7 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
 
 
     override fun clearUploadList() {
-        if (mode == MODE.UPLOAD_TO_CLOUD){
+        if (modeCloud == ModeCloud.UPLOAD_TO_CLOUD){
             noteListToBeUpload.clear()
         }
         hideViewsOnEmptyList(noteListToBeUpload.isEmpty())
@@ -387,16 +387,16 @@ class UploadToCloudActivity : AppCompatActivity(), AdapterUploadNoteList.NoteAct
 //        this.mode = mode
 //    }
 
-    private fun setMode(mode: MODE) {
-        this.mode = mode
-        if (mode == MODE.UPLOAD_TO_CLOUD) {
+    private fun setMode(modeCloud: ModeCloud) {
+        this.modeCloud = modeCloud
+        if (modeCloud == ModeCloud.UPLOAD_TO_CLOUD) {
             findViewById<TextView>(R.id.activityTitle).setText(R.string.uploadToCloud)
             findViewById<TextView>(R.id.titleDescription).setText(R.string.notYetUploaded)
             findViewById<TextView>(R.id.titleDescription2).setText(R.string.alreadyUploaded)
             ivUploadToCloud.setImageResource(R.drawable.ic_upload)
             tvDownload.setTextColor(ContextCompat.getColor(this, R.color.gray))
             tvBackup.setTextColor(ContextCompat.getColor(this, R.color.white))
-        } else if (mode == MODE.DOWNLOAD_FROM_CLOUD) {
+        } else if (modeCloud == ModeCloud.DOWNLOAD_FROM_CLOUD) {
             findViewById<TextView>(R.id.activityTitle).setText(R.string.downloadFromCloud)
             findViewById<TextView>(R.id.titleDescription).setText(R.string.notYetDownloaded)
             findViewById<TextView>(R.id.titleDescription2).setText(R.string.alreadyDownloaded)

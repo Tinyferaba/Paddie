@@ -1,6 +1,6 @@
 package com.fera.paddie.main
 
-enum class MODE {
+enum class ModeMain {
     DELETE,
     ADD
 }

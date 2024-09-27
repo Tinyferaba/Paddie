@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,12 +26,12 @@ class AdapterNoteList(private val context: Context, var noteList: List<TblNote>,
         fun navigateToAddNoteFragment(id: Int)
         fun addToDeleteList(noteList: List<TblNote>)
         fun clearDeleteList()
-        fun changeMode(mode: MODE)
+        fun changeMode(modeMain: ModeMain)
         fun removeFromDeletedList(tblNote: TblNote)
         fun addToDeleteList(note: TblNote)
     }
 
-
+    var animate = true
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.list_item_note, parent, false)
@@ -48,6 +49,17 @@ class AdapterNoteList(private val context: Context, var noteList: List<TblNote>,
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.apply {
+            if (animate){
+                holder.itemView.translationY = 100f
+                holder.itemView.alpha = 0f
+                holder.itemView.animate()
+                    .translationY(0f)
+                    .alpha(1f)
+                    .setDuration(500)
+                    .setInterpolator(AccelerateDecelerateInterpolator())
+                    .start()
+            }
+
             tvTitle.text = noteList[position].title
             var desc = noteList[position].description
             desc?.let {
@@ -105,7 +117,7 @@ class AdapterNoteList(private val context: Context, var noteList: List<TblNote>,
 
             //todo: Complete this functionality
             itemView.setOnLongClickListener {
-                parentAct.changeMode(MODE.DELETE)
+                parentAct.changeMode(ModeMain.DELETE)
                 showCheckBox = true
                 notifyDataSetChanged()
                 checkBox.isChecked = true
