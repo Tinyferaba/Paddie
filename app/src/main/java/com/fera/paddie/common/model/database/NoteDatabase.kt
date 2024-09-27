@@ -39,7 +39,7 @@ abstract class NoteDatabase: RoomDatabase() {
                     context.applicationContext,
                     NoteDatabase::class.java,
                     "note_todo_db")
-                    .createFromAsset("database/note_todo_db.db")
+//                    .createFromAsset("database/note_todo_db.db")
                     .build()
 
                 INSTANCE = instance

@@ -58,20 +58,20 @@ class NoteControllers (application: Application): AndroidViewModel(application) 
         return noteDao.sortByTitleDesc()
     }
 
-    fun getAllFavHymnsByTitleASC(): LiveData<List<TblNote>> {
-        return noteDao.getAllFavHymnsByTitleASC()
+    fun getAllFavByTitleASC(): LiveData<List<TblNote>> {
+        return noteDao.getAllFavByTitleASC()
     }
 
-    fun getAllFavHymnsByTitleDESC(): LiveData<List<TblNote>> {
-        return noteDao.getAllFavHymnsByTitleDESC()
+    fun getAllFavByTitleDESC(): LiveData<List<TblNote>> {
+        return noteDao.getAllFavByTitleDESC()
     }
 
-    fun getAllHymnsByTitleASC(): LiveData<List<TblNote>> {
-        return noteDao.getAllHymnsByTitleASC()
+    fun getAllByTitleASC(): LiveData<List<TblNote>> {
+        return noteDao.getAllByTitleASC()
     }
 
-    fun getAllHymnsByTitleDESC(): LiveData<List<TblNote>> {
-        return noteDao.getAllHymnsByTitleDESC()
+    fun getAllByTitleDESC(): LiveData<List<TblNote>> {
+        return noteDao.getAllByTitleDESC()
     }
 
     fun getAllFavByDescASC(): LiveData<List<TblNote>> {

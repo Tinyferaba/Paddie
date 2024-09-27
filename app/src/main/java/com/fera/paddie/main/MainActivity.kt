@@ -118,10 +118,6 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         loadUserData()
 
 //        Initializer.initApp(this)
-
-//        lifecycleScope.launch {
-//            loadDemoData()
-//        }
     }
 
 
@@ -238,14 +234,14 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         if (viewFavourites) {
             when (currentSortType) {
                 SortOrderType.TITLE_ASC -> {
-                    noteController.getAllFavHymnsByTitleASC().observe(this) {
+                    noteController.getAllFavByTitleASC().observe(this) {
                         listByTitle = it
                         updateList()
                     }
                 }
 
                 SortOrderType.TITLE_DESC -> {
-                    noteController.getAllFavHymnsByTitleDESC().observe(this) {
+                    noteController.getAllFavByTitleDESC().observe(this) {
                         listByTitle = it
                         updateList()
                     }
@@ -268,14 +264,14 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
         } else {
             when (currentSortType) {
                 SortOrderType.TITLE_ASC -> {
-                    noteController.getAllHymnsByTitleASC().observe(this) {
+                    noteController.getAllByTitleASC().observe(this) {
                         listByTitle = it
                         updateList()
                     }
                 }
 
                 SortOrderType.TITLE_DESC -> {
-                    noteController.getAllHymnsByTitleDESC().observe(this) {
+                    noteController.getAllByTitleDESC().observe(this) {
                         listByTitle = it
                         updateList()
                     }
@@ -440,14 +436,6 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
                 changeMode(ModeMain.ADD)
     }
 
-//    private fun hideViewsOnEmptyList(listIsEmpty: Boolean){
-//        if (listIsEmpty){
-//            ivAddNote.setImageResource(R.drawable.ic_add)
-//        } else {
-//            ivAddNote.setImageResource(R.drawable.ic_delete)
-//        }
-//    }
-
     private fun logoutUser() {
         FirebaseAuth.getInstance().signOut()
         loggedIn = false
@@ -458,8 +446,6 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     }
 
     private fun loadUserData() {
-//        val accountCreated = intent.getBooleanExtra("accountCreated", false)
-//        if (accountCreated){
         FirebaseAuth.getInstance().uid.let { uid ->
             if (uid != null) {
                 tvLogin.text = "Logout"
@@ -499,9 +485,7 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
 
             }
         }
-//        }
     }
-
 
     private fun getBitmap(drawable: Drawable): Bitmap {
         return (drawable as BitmapDrawable).bitmap
@@ -586,61 +570,40 @@ class MainActivity : AppCompatActivity(), AdapterNoteList.NoteActivities {
     }
 
     private fun setupSwipeToDelete(recyclerView: RecyclerView, adapter: AdapterNoteList) {
-        val itemTouchHelperCallback =
-            object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
-                // onMove is for drag & drop, which we don't need here
-                override fun onMove(
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    target: RecyclerView.ViewHolder
-                ): Boolean {
-                    return false
-                }
-
-                // Called when an item is swiped
-                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                    val position = viewHolder.adapterPosition
-                    val noteToDelete = adapter.noteList[position]
-
-                    // Call the parent's deleteNote method
-                    adapter.parentAct.deleteNote(noteToDelete.pkNoteId!!)
-
-                    // Remove the item from the adapter's list and notify the adapter
-                    adapter.noteList = adapter.noteList.toMutableList().also {
-                        it.removeAt(position)
-                    }
-                    adapter.notifyItemRemoved(position)
-                }
-
-                // Optional: Customize swipe background (red background with delete icon)
-                override fun onChildDraw(
-                    c: Canvas,
-                    recyclerView: RecyclerView,
-                    viewHolder: RecyclerView.ViewHolder,
-                    dX: Float,
-                    dY: Float,
-                    actionState: Int,
-                    isCurrentlyActive: Boolean
-                ) {
-                    // Customize the swipe background and icon (optional)
-                    if (dX == 0.0f) {
-                        viewHolder.itemView.setBackgroundResource(R.drawable.bg_list_item)
-                    } else {
-                        val colorObtained = getColorFromValue(this@MainActivity, dX.toInt())
-                        viewHolder.itemView.backgroundTintList =
-                            ColorStateList.valueOf(colorObtained)
-                    }
-                    super.onChildDraw(
-                        c,
-                        recyclerView,
-                        viewHolder,
-                        dX,
-                        dY,
-                        actionState,
-                        isCurrentlyActive
-                    )
-                }
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            // onMove is for drag & drop, which we don't need here
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
             }
+
+            // Called when an item is swiped
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val noteToDelete = adapter.noteList[position]
+
+                // Call the parent's deleteNote method
+                adapter.parentAct.deleteNote(noteToDelete.pkNoteId!!)
+
+                // Remove the item from the adapter's list and notify the adapter
+                adapter.noteList = adapter.noteList.toMutableList().also {
+                    it.removeAt(position)
+                }
+                adapter.notifyItemRemoved(position)
+            }
+
+            // Optional: Customize swipe background (red background with delete icon)
+            override fun onChildDraw(c: Canvas, recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, dX: Float, dY: Float, actionState: Int, isCurrentlyActive: Boolean) {
+                // Customize the swipe background and icon (optional)
+                if (dX == 0.0f) {
+                    viewHolder.itemView.setBackgroundResource(R.drawable.bg_list_item)
+                } else {
+                    val colorObtained = getColorFromValue(this@MainActivity, dX.toInt())
+                    viewHolder.itemView.backgroundTintList =
+                        ColorStateList.valueOf(colorObtained)
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+            }
+        }
 
         val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
         itemTouchHelper.attachToRecyclerView(recyclerView)

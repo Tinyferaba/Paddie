@@ -52,25 +52,25 @@ interface NoteDao {
         select * from tbl_note where favourite = 1
         order by title asc
     """)
-    fun getAllFavHymnsByTitleASC(): LiveData<List<TblNote>>
+    fun getAllFavByTitleASC(): LiveData<List<TblNote>>
 
     @Query("""
         select * from tbl_note where favourite = 1
         order by title desc
     """)
-    fun getAllFavHymnsByTitleDESC(): LiveData<List<TblNote>>
+    fun getAllFavByTitleDESC(): LiveData<List<TblNote>>
 
     @Query("""
         select * from tbl_note
         order by title asc
     """)
-    fun getAllHymnsByTitleASC(): LiveData<List<TblNote>>
+    fun getAllByTitleASC(): LiveData<List<TblNote>>
 
     @Query("""
         select * from tbl_note
         order by title desc
     """)
-    fun getAllHymnsByTitleDESC(): LiveData<List<TblNote>>
+    fun getAllByTitleDESC(): LiveData<List<TblNote>>
 
     @Query("""
         select * from tbl_note where favourite = 1
